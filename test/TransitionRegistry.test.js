@@ -1,24 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { Transition } from '../src/Transition.js'
 import { TransitionRegistry } from '../src/TransitionRegistry.js'
+import { expectSameItems } from './expectSameItems.js'
 
 const payMove = { from: 'placed', to: 'paid', on: 'pay' }
 const shipMove = { from: 'paid', to: 'shipped', on: 'ship' }
-
-/**
- * Checks that exactly these transitions came back, in this order. toEqual cannot do
- * it, because a transition keeps its fields private and so every one looks alike.
- *
- * @param {Transition[]} actual - The transitions that came back.
- * @param {Transition[]} expected - The very transitions that should have come back.
- */
-const expectSameTransitions = (actual, expected) => {
-  expect(actual).toHaveLength(expected.length)
-
-  expected.forEach((transition, index) => {
-    expect(actual[index]).toBe(transition)
-  })
-}
 
 describe('TransitionRegistry', () => {
   it('finds a transition by the state it leaves and the event it answers to', () => {
@@ -27,7 +13,7 @@ describe('TransitionRegistry', () => {
 
     registry.register(pay)
 
-    expectSameTransitions(registry.findAll('placed', 'pay'), [pay])
+    expectSameItems(registry.findAll('placed', 'pay'), [pay])
   })
 
   it('finds nothing while empty', () => {
@@ -58,8 +44,8 @@ describe('TransitionRegistry', () => {
     registry.register(cancelPlaced)
     registry.register(cancelPaid)
 
-    expectSameTransitions(registry.findAll('placed', 'cancel'), [cancelPlaced])
-    expectSameTransitions(registry.findAll('paid', 'cancel'), [cancelPaid])
+    expectSameItems(registry.findAll('placed', 'cancel'), [cancelPlaced])
+    expectSameItems(registry.findAll('paid', 'cancel'), [cancelPaid])
   })
 
   it('finds every match in registration order, alike ones included', () => {
@@ -70,7 +56,7 @@ describe('TransitionRegistry', () => {
     registry.register(first)
     registry.register(second)
 
-    expectSameTransitions(registry.findAll('placed', 'pay'), [first, second])
+    expectSameItems(registry.findAll('placed', 'pay'), [first, second])
   })
 
   it('ignores guards when searching', () => {
@@ -79,7 +65,7 @@ describe('TransitionRegistry', () => {
 
     registry.register(guardedPay)
 
-    expectSameTransitions(registry.findAll('placed', 'pay'), [guardedPay])
+    expectSameItems(registry.findAll('placed', 'pay'), [guardedPay])
   })
 
   it('keeps registries independent of each other', () => {
@@ -108,7 +94,7 @@ describe('TransitionRegistry', () => {
     registry.register(pay)
     registry.register(cancel)
 
-    expectSameTransitions(registry.transitionsFrom('placed'), [pay, cancel])
+    expectSameItems(registry.transitionsFrom('placed'), [pay, cancel])
   })
 
   it('lists no way out of a state that has none', () => {
@@ -131,7 +117,7 @@ describe('TransitionRegistry', () => {
     registry.register(pay)
     registry.register(new Transition(shipMove))
 
-    expectSameTransitions(registry.transitionsFrom('placed'), [pay])
+    expectSameItems(registry.transitionsFrom('placed'), [pay])
   })
 
   it('lists a transition even when its guard says no', () => {
@@ -140,7 +126,7 @@ describe('TransitionRegistry', () => {
 
     registry.register(guardedPay)
 
-    expectSameTransitions(registry.transitionsFrom('placed'), [guardedPay])
+    expectSameItems(registry.transitionsFrom('placed'), [guardedPay])
   })
 
   it('lists a transition that returns to the same state', () => {
@@ -149,7 +135,7 @@ describe('TransitionRegistry', () => {
 
     registry.register(confirm)
 
-    expectSameTransitions(registry.transitionsFrom('paid'), [confirm])
+    expectSameItems(registry.transitionsFrom('paid'), [confirm])
   })
 
   it('cannot be changed through the list it returns', () => {
