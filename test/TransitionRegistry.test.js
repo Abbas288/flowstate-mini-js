@@ -79,11 +79,12 @@ describe('TransitionRegistry', () => {
 
   it('cannot be changed through the matches it returns', () => {
     const registry = new TransitionRegistry()
-    registry.register(new Transition(payMove))
+    const pay = new Transition(payMove)
+    registry.register(pay)
 
     registry.findAll('placed', 'pay').push(new Transition(payMove))
 
-    expect(registry.findAll('placed', 'pay')).toHaveLength(1)
+    expectSameItems(registry.findAll('placed', 'pay'), [pay])
   })
 
   it('lists every way out of a state, in registration order', () => {
@@ -140,11 +141,12 @@ describe('TransitionRegistry', () => {
 
   it('cannot be changed through the list it returns', () => {
     const registry = new TransitionRegistry()
-    registry.register(new Transition(payMove))
+    const pay = new Transition(payMove)
+    registry.register(pay)
 
     registry.transitionsFrom('placed').push(new Transition(shipMove))
 
-    expect(registry.transitionsFrom('placed')).toHaveLength(1)
+    expectSameItems(registry.transitionsFrom('placed'), [pay])
   })
 
   it('rejects values that are not transitions', () => {
