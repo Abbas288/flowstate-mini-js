@@ -51,7 +51,7 @@ export class Transition {
   }
 
   /**
-   * Two transitions may share an event name if they leave different states.
+   * Several transitions may share an event name, even transitions that leave the same state.
    *
    * @returns {string} - Name of the event that triggers this transition.
    */
