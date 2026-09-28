@@ -1,9 +1,10 @@
 /*
- * The only file a user imports from. StateMachine is the whole working interface;
- * State, Transition and the registries are built by the machine and stay internal.
+ * Entry point of flowstate-mini-js.
  *
- * The error types are passed on as errors.js exports them, so that list is kept in
- * one place and a new error type cannot be forgotten here.
+ *   import { StateMachine, FlowStateError } from 'flowstate-mini-js'
+ *
+ * StateMachine is the class you work with. The error classes are exported so that you
+ * can catch them by type. FlowStateError is the base class of all of them.
  */
 export { StateMachine } from './StateMachine.js'
 export * from './errors.js'

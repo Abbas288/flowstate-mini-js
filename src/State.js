@@ -7,8 +7,8 @@ export class State {
   #onExit
 
   /**
-   * Both hooks are optional. A state without them is just a name
-   * that the machine can rest in.
+   * Creates a state. Both hooks are optional. Throws a TypeError if the name or a
+   * hook has the wrong type.
    *
    * @param {string} name - Identifies the state within its machine.
    * @param {object} [options] - The hooks to run on the way in and out.
@@ -26,7 +26,7 @@ export class State {
   }
 
   /**
-   * The name is fixed once the state is built.
+   * The name cannot be changed after the state has been created.
    *
    * @returns {string} - The name identifying this state.
    */

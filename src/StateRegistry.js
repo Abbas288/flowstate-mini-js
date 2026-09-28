@@ -21,7 +21,7 @@ export class StateRegistry {
   }
 
   /**
-   * The answer comes without fetching the state behind the name.
+   * Tells whether a state is registered under the name, without fetching it.
    *
    * @param {string} name - The name to look for.
    * @returns {boolean} - True if a state with that name is registered.

@@ -1,12 +1,12 @@
 import { Transition } from './Transition.js'
 
 /**
- * Base class for every error thrown when a rule of your machine is broken.
- * Catching this one catches them all, including kinds added later.
+ * Base class for every error the machine throws when one of its rules is broken.
+ * Catch it to handle all of them, including kinds added in later versions.
  *
  * A wrong argument type is not one of these. If a name is not a string or a guard
- * is not a function, the built-in TypeError is thrown instead, because the mistake
- * is in the calling code rather than in the machine.
+ * is not a function, the built-in TypeError is thrown instead, since that is a
+ * mistake in the calling code.
  */
 class FlowStateError extends Error {
   /**
@@ -23,16 +23,15 @@ class FlowStateError extends Error {
 }
 
 /**
- * Shared by the errors that are about a single state name. It is not
- * exported, so catch FlowStateError for all of them, or one of the
- * concrete kinds below for a single case.
+ * Holds the state name for the errors below that are about a single state.
+ * It is not exported.
  */
 class StateNameError extends FlowStateError {
   #stateName
 
   /**
-   * The name is given twice, once inside the message for a human reader
-   * and once on its own so that code can read it.
+   * Stores the state name next to the message, so that code can read it without
+   * parsing the message.
    *
    * @param {string} message - What went wrong, in plain words.
    * @param {string} stateName - The state name the error is about.
@@ -44,8 +43,7 @@ class StateNameError extends FlowStateError {
   }
 
   /**
-   * The name is kept on its own, so the caller never has to pick the
-   * message apart to find it.
+   * Gives the name on its own, so that code does not have to parse the message.
    *
    * @returns {string} - The state name the error is about.
    */
@@ -55,11 +53,11 @@ class StateNameError extends FlowStateError {
 }
 
 /**
- * Thrown when a state name is used that was never defined.
+ * Thrown when a transition or the starting state names a state that was never defined.
  */
 class UnknownStateError extends StateNameError {
   /**
-   * Only the wording belongs here. The base class stores the name.
+   * Creates the error for a state name that was never defined.
    *
    * @param {string} stateName - The name that could not be found.
    */
@@ -69,12 +67,12 @@ class UnknownStateError extends StateNameError {
 }
 
 /**
- * Thrown when the same state name is defined twice, since overwriting the
- * first one would silently throw away its hooks.
+ * Thrown when defineState is called with a name that is already defined. The state
+ * defined first, and its hooks, are kept.
  */
 class DuplicateStateError extends StateNameError {
   /**
-   * Only the wording belongs here. The base class stores the name.
+   * Creates the error for a state name that is already defined.
    *
    * @param {string} stateName - The name that was already taken.
    */
@@ -84,17 +82,16 @@ class DuplicateStateError extends StateNameError {
 }
 
 /**
- * Shared by the errors that say why a sent event was refused. It is not exported,
- * so catch FlowStateError for all of them, or one of the concrete kinds below for
- * a single case.
+ * Holds the state and event names for the errors below that say why send refused
+ * an event. It is not exported.
  */
 class RefusedEventError extends FlowStateError {
   #fromStateName
   #eventName
 
   /**
-   * The names are given twice, once inside the message for a human reader and once
-   * on their own so that code can read them.
+   * Stores the state and event names next to the message, so that code can read them
+   * without parsing the message.
    *
    * @param {string} message - What went wrong, in plain words.
    * @param {object} refusedEvent - The event and the state it was sent in, such as a Transition.
@@ -128,13 +125,12 @@ class RefusedEventError extends FlowStateError {
 }
 
 /**
- * Thrown when no transition leaves the current state on the event that was sent.
- * Both names are carried, because either one may be perfectly good on its own and
- * only the pair is at fault.
+ * Thrown by send when no transition leaves the current state on the event. Either
+ * the event was sent in the wrong state, or a transition is missing.
  */
 class NoTransitionError extends RefusedEventError {
   /**
-   * The message names both, so a log line on its own points at the missing edge.
+   * Creates the error for a state and an event that no transition connects.
    *
    * @param {string} fromStateName - Name of the state the machine is in.
    * @param {string} eventName - Name of the event that was sent.
@@ -145,14 +141,14 @@ class NoTransitionError extends RefusedEventError {
 }
 
 /**
- * Thrown when a transition exists for the event but its guard refuses it. Unlike a
- * missing transition, the same event may succeed later, once the context changes.
+ * Thrown by send when transitions exist for the event but the guard of each one
+ * refuses the move. The same event may succeed later, once the context changes.
  */
 class BlockedTransitionError extends RefusedEventError {
   #toStateName
 
   /**
-   * Takes the whole transition, so that its two state names cannot be swapped.
+   * Creates the error for the first transition whose guard refused the move.
    *
    * @param {Transition} transition - The transition whose guard refused it.
    */
@@ -177,12 +173,9 @@ class BlockedTransitionError extends RefusedEventError {
 }
 
 /*
- * What a caller can catch: FlowStateError for all of the machine's own errors,
- * or one concrete kind to handle a single case.
- *
- * StateNameError and RefusedEventError stay inside the file. They only share fields
- * between the errors that extend them, so no caller needs them, and keeping them
- * private leaves the hierarchy free to change without breaking anyone.
+ * The error types a caller can catch: FlowStateError for every error the machine
+ * throws, or one concrete kind for a single case. StateNameError and RefusedEventError
+ * are not exported, since they only hold fields shared by the errors that extend them.
  */
 // prettier-ignore
 export {

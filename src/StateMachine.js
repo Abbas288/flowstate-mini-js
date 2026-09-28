@@ -5,8 +5,8 @@ import { TransitionRegistry } from './TransitionRegistry.js'
 import { BlockedTransitionError, NoTransitionError, UnknownStateError } from './errors.js'
 
 /**
- * A machine that is in exactly one state at a time, and that can be asked about the
- * states and transitions it knows.
+ * A finite state machine. It is in one state at a time and moves to another state
+ * when you send it an event that one of its transitions allows.
  */
 export class StateMachine {
   #currentStateName
@@ -15,8 +15,8 @@ export class StateMachine {
   #transitions = new TransitionRegistry()
 
   /**
-   * The starting state need not be defined yet. It can be defined after the machine
-   * has been created.
+   * Creates a machine that starts in the named state. That state can be defined after
+   * the machine has been created, but it must be defined before the first event is sent.
    *
    * @param {string} initialStateName - Name of the state the machine starts in.
    */
@@ -27,7 +27,7 @@ export class StateMachine {
   }
 
   /**
-   * Only the machine can change its own state, so this name cannot be written.
+   * Changes only when send moves the machine. It cannot be set from outside.
    *
    * @returns {string} - Name of the state the machine is in.
    */
@@ -36,8 +36,8 @@ export class StateMachine {
   }
 
   /**
-   * The object itself is handed out rather than a copy, so that hooks, guards
-   * and the caller all write to the same place. Only the reference is fixed.
+   * Holds your own data for guards and hooks. Every guard and hook receives this same
+   * object, so a value written here can be read there. The object cannot be replaced.
    *
    * @returns {object} - The context every hook and guard is handed.
    */
@@ -46,8 +46,8 @@ export class StateMachine {
   }
 
   /**
-   * A defined state is not the same as a reachable one, since defining
-   * a state connects it to nothing.
+   * Lists the states defined so far. The array is a copy, so changing it does not
+   * change the machine.
    *
    * @returns {string[]} - Names of every defined state, in definition order.
    */
@@ -56,8 +56,9 @@ export class StateMachine {
   }
 
   /**
-   * The name and the hooks are checked here, so a bad definition fails at
-   * once instead of on the first move. A name can be defined only once.
+   * Adds a state the machine can be in. onEnter runs each time the machine enters the
+   * state, and onExit each time it leaves it. Throws a DuplicateStateError if the name
+   * is already defined, and a TypeError if the name or a hook has the wrong type.
    *
    * @param {string} name - Name the state is known by inside this machine.
    * @param {object} [options] - The hooks to run on the way in and out.
@@ -72,8 +73,9 @@ export class StateMachine {
   }
 
   /**
-   * Both named states must already be defined, so that the graph can never
-   * point at a state that does not exist.
+   * Lets an event move the machine from one state to another. Both states must be
+   * defined first, or an UnknownStateError is thrown. If a guard is given, the move
+   * happens only when the guard returns a truthy value.
    *
    * @param {object} move - The three names that make up the move, plus an optional guard.
    * @param {string} move.from - Name of the state to leave.
@@ -95,8 +97,9 @@ export class StateMachine {
 
   /**
    * Moves the machine along the first transition on the event whose guard allows it.
-   * Runs the exit hook, then changes the current state, then runs the enter hook.
-   * Throws NoTransitionError or BlockedTransitionError if the machine cannot move.
+   * Runs onExit of the current state, then changes the current state, then runs
+   * onEnter of the new one. Throws NoTransitionError or BlockedTransitionError if the
+   * machine cannot move.
    *
    * @param {string} eventName - Name of the event to send.
    */
@@ -122,8 +125,8 @@ export class StateMachine {
   }
 
   /**
-   * Guards are not consulted, so a listed event may still be refused
-   * at the moment it is sent.
+   * Lists the events that have a transition out of the state. Guards are not asked,
+   * so sending a listed event can still throw a BlockedTransitionError.
    *
    * @param {string} fromStateName - Name of the state to look out from.
    * @returns {string[]} - Names of the events leaving that state, each once, in the order first defined.
