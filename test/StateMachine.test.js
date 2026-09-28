@@ -273,7 +273,7 @@ describe('StateMachine', () => {
       from: 'placed',
       to: 'paid',
       on: 'pay',
-      guard: (context) => context.amount > 0,
+      guard: (ctx) => ctx.amount > 0,
     })
 
     expect(order.eventNamesFrom('placed')).toEqual(['pay'])
@@ -498,8 +498,8 @@ describe('StateMachine', () => {
       from: 'placed',
       to: 'paid',
       on: 'pay',
-      guard: (context) => {
-        receivedContexts.push(context)
+      guard: (ctx) => {
+        receivedContexts.push(ctx)
 
         return true
       },
@@ -517,7 +517,7 @@ describe('StateMachine', () => {
       from: 'placed',
       to: 'paid',
       on: 'pay',
-      guard: (context) => context.amount > 0,
+      guard: (ctx) => ctx.amount > 0,
     })
 
     order.context.amount = 0
@@ -675,7 +675,7 @@ describe('StateMachine', () => {
       from: 'placed',
       to: 'paid',
       on: 'pay',
-      guard: (context) => context.amount > 0,
+      guard: (ctx) => ctx.amount > 0,
     })
 
     order.context.amount = 0

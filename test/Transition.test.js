@@ -56,7 +56,7 @@ describe('Transition', () => {
   })
 
   it('accepts a function as a guard', () => {
-    const validGuard = (context) => context.amount > 0
+    const validGuard = (ctx) => ctx.amount > 0
 
     expect(() => new Transition({ ...validMove, guard: validGuard })).not.toThrow()
   })
@@ -90,7 +90,7 @@ describe('Transition', () => {
   it('passes the context on to its guard', () => {
     const transition = new Transition({
       ...validMove,
-      guard: (context) => context.amount > 0,
+      guard: (ctx) => ctx.amount > 0,
     })
 
     expect(transition.isAllowedIn({ amount: 250 })).toBe(true)
