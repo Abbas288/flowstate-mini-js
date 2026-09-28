@@ -14,13 +14,8 @@ export class StateRegistry {
    * @param {State} state - The state to store.
    */
   register(state) {
-    if (!(state instanceof State)) {
-      throw new TypeError('Only State instances can be registered.')
-    }
-
-    if (this.#statesByName.has(state.name)) {
-      throw new DuplicateStateError(state.name)
-    }
+    this.#requireState(state)
+    this.#requireUnusedName(state.name)
 
     this.#statesByName.set(state.name, state)
   }
@@ -52,5 +47,27 @@ export class StateRegistry {
    */
   get stateNames() {
     return [...this.#statesByName.keys()]
+  }
+
+  /**
+   * Throws unless the value is a State.
+   *
+   * @param {*} value - The value to check.
+   */
+  #requireState(value) {
+    if (!(value instanceof State)) {
+      throw new TypeError('Only State instances can be registered.')
+    }
+  }
+
+  /**
+   * Throws a DuplicateStateError if a state with the name is already registered.
+   *
+   * @param {string} name - The name to check.
+   */
+  #requireUnusedName(name) {
+    if (this.has(name)) {
+      throw new DuplicateStateError(name)
+    }
   }
 }

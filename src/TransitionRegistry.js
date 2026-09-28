@@ -12,9 +12,7 @@ export class TransitionRegistry {
    * @param {Transition} transition - The transition to store.
    */
   register(transition) {
-    if (!(transition instanceof Transition)) {
-      throw new TypeError('Only Transition instances can be registered.')
-    }
+    this.#requireTransition(transition)
 
     this.#transitions.push(transition)
   }
@@ -40,5 +38,16 @@ export class TransitionRegistry {
    */
   transitionsFrom(fromStateName) {
     return this.#transitions.filter((transition) => transition.fromStateName === fromStateName)
+  }
+
+  /**
+   * Throws unless the value is a Transition.
+   *
+   * @param {*} value - The value to check.
+   */
+  #requireTransition(value) {
+    if (!(value instanceof Transition)) {
+      throw new TypeError('Only Transition instances can be registered.')
+    }
   }
 }
