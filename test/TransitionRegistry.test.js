@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { Transition } from '../src/Transition.js'
 import { TransitionRegistry } from '../src/TransitionRegistry.js'
-import { expectSameItems } from './expectSameItems.js'
+import { expectSameItems } from './helpers/expectSameItems.js'
 
 const payMove = { from: 'placed', to: 'paid', on: 'pay' }
 const shipMove = { from: 'paid', to: 'shipped', on: 'ship' }
