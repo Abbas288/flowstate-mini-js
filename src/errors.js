@@ -97,10 +97,11 @@ class RefusedEventError extends FlowStateError {
    * on their own so that code can read them.
    *
    * @param {string} message - What went wrong, in plain words.
-   * @param {string} fromStateName - Name of the state the machine is in.
-   * @param {string} eventName - Name of the event that was sent.
+   * @param {object} refusedEvent - The event and the state it was sent in, such as a Transition.
+   * @param {string} refusedEvent.fromStateName - Name of the state the machine is in.
+   * @param {string} refusedEvent.eventName - Name of the event that was sent.
    */
-  constructor(message, fromStateName, eventName) {
+  constructor(message, { fromStateName, eventName }) {
     super(message)
 
     this.#fromStateName = fromStateName
@@ -139,7 +140,7 @@ class NoTransitionError extends RefusedEventError {
    * @param {string} eventName - Name of the event that was sent.
    */
   constructor(fromStateName, eventName) {
-    super(`No transition from state "${fromStateName}" on event "${eventName}".`, fromStateName, eventName)
+    super(`No transition from state "${fromStateName}" on event "${eventName}".`, { fromStateName, eventName })
   }
 }
 
@@ -159,8 +160,7 @@ class BlockedTransitionError extends RefusedEventError {
     super(
       `The guard blocked the transition from state "${transition.fromStateName}" ` +
         `to state "${transition.toStateName}" on event "${transition.eventName}".`,
-      transition.fromStateName,
-      transition.eventName
+      transition
     )
 
     this.#toStateName = transition.toStateName
