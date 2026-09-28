@@ -1,4 +1,4 @@
-# flowstate-js
+# flowstate-mini-js
 
 A small state machine library for JavaScript. No dependencies.
 
@@ -7,13 +7,16 @@ A small state machine library for JavaScript. No dependencies.
 A state machine keeps track of which state something is in, and which events are allowed
 to change that state. An order can go from `placed` to `paid`, but not straight to `shipped`.
 
-Most libraries stop there. `flowstate-js` can also answer questions about the machine
-itself:
+With `flowstate-mini-js` you can:
 
-- Which events take me from one state to another? You get the shortest list back.
-- Are there states that can never be reached?
-- Are there states you can never leave?
-- Can I undo the last transition? Yes.
+- Define states with hooks that run when the machine enters or leaves them.
+- Define transitions, each with an optional guard that decides whether the move is allowed right now.
+- Send an event to move the machine, or ask first whether the event would move it.
+- Tell from the type of error whether no transition leaves the current state on the event,
+  or whether a guard refused the move.
+
+A transition can only connect states that have already been defined, so a mistake in the
+graph is caught when the transition is defined, not when an event is sent.
 
 ## What it does not do
 

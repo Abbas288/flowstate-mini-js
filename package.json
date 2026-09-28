@@ -1,7 +1,7 @@
 {
-  "name": "flowstate-js",
+  "name": "flowstate-mini-js",
   "version": "0.1.0",
-  "description": "A dependency-free finite state machine for JavaScript that you can also reason about: shortest-path search between states, graph auditing, and undo.",
+  "description": "A small, dependency-free finite state machine for JavaScript with guards and hooks.",
   "type": "module",
   "license": "MIT",
   "scripts": {
