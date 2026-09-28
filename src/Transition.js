@@ -21,10 +21,7 @@ export class Transition {
     this.#requireName(from, 'from')
     this.#requireName(to, 'to')
     this.#requireName(on, 'on')
-
-    if (guard !== undefined && typeof guard !== 'function') {
-      throw new TypeError('Transition guard must be a function when provided.')
-    }
+    this.#requireOptionalGuard(guard)
 
     this.#fromStateName = from
     this.#toStateName = to
@@ -94,6 +91,17 @@ export class Transition {
   #requireName(value, label) {
     if (typeof value !== 'string' || value.trim() === '') {
       throw new TypeError(`Transition ${label} must be a non-empty string.`)
+    }
+  }
+
+  /**
+   * Throws unless the value is a function. The guard is optional, so undefined passes.
+   *
+   * @param {*} value - The value to check.
+   */
+  #requireOptionalGuard(value) {
+    if (value !== undefined && typeof value !== 'function') {
+      throw new TypeError('Transition guard must be a function when provided.')
     }
   }
 }
