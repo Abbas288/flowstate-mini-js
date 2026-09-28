@@ -168,27 +168,13 @@ export class StateMachine {
   }
 
   /**
-   * Throws NoTransitionError when no transition leaves the current state on the event.
-   * Throws BlockedTransitionError when such transitions exist but the guard of each one
-   * refuses the move.
+   * Finds the transition send will take, and throws an error instead if there is none.
    *
    * @param {string} eventName - Name of the event that was sent.
    * @returns {Transition} - The first transition whose guard allows the move.
    */
   #chooseTransition(eventName) {
-    const transition = this.#findAllowedTransition(eventName)
-
-    if (transition !== undefined) {
-      return transition
-    }
-
-    const candidates = this.#transitions.findAll(this.#currentStateName, eventName)
-
-    if (candidates.length === 0) {
-      throw new NoTransitionError(this.#currentStateName, eventName)
-    }
-
-    throw new BlockedTransitionError(candidates[0])
+    return this.#findAllowedTransition(eventName) ?? this.#throwRefusedEventError(eventName)
   }
 
   /**
@@ -201,6 +187,23 @@ export class StateMachine {
     return this.#transitions
       .findAll(this.#currentStateName, eventName)
       .find((candidate) => candidate.isAllowedIn(this.#context))
+  }
+
+  /**
+   * Throws NoTransitionError when no transition leaves the current state on the event.
+   * Throws BlockedTransitionError when such transitions exist but the guard of each one
+   * refuses the move.
+   *
+   * @param {string} eventName - Name of the event that was refused.
+   */
+  #throwRefusedEventError(eventName) {
+    const candidates = this.#transitions.findAll(this.#currentStateName, eventName)
+
+    if (candidates.length === 0) {
+      throw new NoTransitionError(this.#currentStateName, eventName)
+    }
+
+    throw new BlockedTransitionError(candidates[0])
   }
 
   /**
