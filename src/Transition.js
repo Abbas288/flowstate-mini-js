@@ -18,15 +18,10 @@ export class Transition {
    * @param {(context: object) => boolean} [move.guard] - Decides if the move is allowed.
    */
   constructor({ from, to, on, guard } = {}) {
-    this.#requireName(from, 'from')
-    this.#requireName(to, 'to')
-    this.#requireName(on, 'on')
-    this.#requireOptionalGuard(guard)
-
-    this.#fromStateName = from
-    this.#toStateName = to
-    this.#eventName = on
-    this.#guard = guard
+    this.#fromStateName = this.#requireName(from, 'from')
+    this.#toStateName = this.#requireName(to, 'to')
+    this.#eventName = this.#requireName(on, 'on')
+    this.#guard = this.#requireOptionalGuard(guard)
   }
 
   /**
@@ -83,25 +78,33 @@ export class Transition {
   }
 
   /**
-   * Throws unless the value can be used as a name.
+   * Returns the value unchanged if it can be used as a name, and throws a TypeError
+   * otherwise.
    *
    * @param {*} value - The value to check.
    * @param {string} label - Field name, used in the error message.
+   * @returns {string} - The same value.
    */
   #requireName(value, label) {
     if (typeof value !== 'string' || value.trim() === '') {
       throw new TypeError(`Transition ${label} must be a non-empty string.`)
     }
+
+    return value
   }
 
   /**
-   * Throws unless the value is a function. The guard is optional, so undefined passes.
+   * Returns the value unchanged if it is a function or undefined, and throws a
+   * TypeError otherwise.
    *
    * @param {*} value - The value to check.
+   * @returns {((context: object) => boolean)|undefined} - The same value.
    */
   #requireOptionalGuard(value) {
     if (value !== undefined && typeof value !== 'function') {
       throw new TypeError('Transition guard must be a function when provided.')
     }
+
+    return value
   }
 }

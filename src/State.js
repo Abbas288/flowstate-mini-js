@@ -16,13 +16,9 @@ export class State {
    * @param {(context: object) => void} [options.onExit] - Runs on leaving this state.
    */
   constructor(name, { onEnter, onExit } = {}) {
-    this.#requireName(name)
-    this.#requireOptionalHook(onEnter, 'onEnter')
-    this.#requireOptionalHook(onExit, 'onExit')
-
-    this.#name = name
-    this.#onEnter = onEnter
-    this.#onExit = onExit
+    this.#name = this.#requireName(name)
+    this.#onEnter = this.#requireOptionalHook(onEnter, 'onEnter')
+    this.#onExit = this.#requireOptionalHook(onExit, 'onExit')
   }
 
   /**
@@ -57,25 +53,33 @@ export class State {
   }
 
   /**
-   * Throws unless the value can be used as this state's name.
+   * Returns the value unchanged if it can be used as this state's name, and throws a
+   * TypeError otherwise.
    *
    * @param {*} value - The value to check.
+   * @returns {string} - The same value.
    */
   #requireName(value) {
     if (typeof value !== 'string' || value.trim() === '') {
       throw new TypeError('State name must be a non-empty string.')
     }
+
+    return value
   }
 
   /**
-   * Throws unless the value is a function. Hooks are optional, so undefined passes.
+   * Returns the value unchanged if it is a function or undefined, and throws a
+   * TypeError otherwise.
    *
    * @param {*} value - The value to check.
    * @param {string} label - Hook name, used in the error message.
+   * @returns {((context: object) => void)|undefined} - The same value.
    */
   #requireOptionalHook(value, label) {
     if (value !== undefined && typeof value !== 'function') {
       throw new TypeError(`${label} must be a function when provided.`)
     }
+
+    return value
   }
 }

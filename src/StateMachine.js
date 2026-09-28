@@ -21,9 +21,7 @@ export class StateMachine {
    * @param {string} initialStateName - Name of the state the machine starts in.
    */
   constructor(initialStateName) {
-    this.#requireName(initialStateName, 'Initial state name')
-
-    this.#currentStateName = initialStateName
+    this.#currentStateName = this.#requireName(initialStateName, 'Initial state name')
   }
 
   /**
@@ -138,15 +136,19 @@ export class StateMachine {
   }
 
   /**
-   * Throws unless the value can be used as a name.
+   * Returns the value unchanged if it can be used as a name, and throws a TypeError
+   * otherwise.
    *
    * @param {*} value - The value to check.
    * @param {string} label - What the name is for, used to open the error message.
+   * @returns {string} - The same value.
    */
   #requireName(value, label) {
     if (typeof value !== 'string' || value.trim() === '') {
       throw new TypeError(`${label} must be a non-empty string.`)
     }
+
+    return value
   }
 
   /**
