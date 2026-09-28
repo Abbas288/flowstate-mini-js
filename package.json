@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "description": "A small, dependency-free finite state machine for JavaScript with guards and hooks.",
   "type": "module",
+  "main": "./src/index.js",
+  "exports": "./src/index.js",
   "license": "MIT",
   "scripts": {
     "test": "vitest run",
