@@ -7,6 +7,7 @@ import {
   NoTransitionError,
   UnknownStateError,
 } from '../src/errors.js'
+import { expectSameItems } from './helpers/expectSameItems.js'
 
 const invalidNames = [undefined, null, '', '   ', 42, {}, ['placed']]
 const invalidFunctions = ['always', 42, {}, null, true, ['guard']]
@@ -507,8 +508,7 @@ describe('StateMachine', () => {
 
     order.send('pay')
 
-    expect(receivedContexts).toHaveLength(1)
-    expect(receivedContexts[0]).toBe(order.context)
+    expectSameItems(receivedContexts, [order.context])
   })
 
   it('moves on a later send once the guard allows it', () => {
@@ -721,8 +721,7 @@ describe('StateMachine', () => {
 
     order.canSend('pay')
 
-    expect(receivedContexts).toHaveLength(1)
-    expect(receivedContexts[0]).toBe(order.context)
+    expectSameItems(receivedContexts, [order.context])
   })
 
   it('answers without asking a later guard once an earlier one allows the move', () => {
@@ -791,9 +790,7 @@ describe('StateMachine', () => {
 
     order.send('pay')
 
-    expect(receivedContexts).toHaveLength(2)
-    expect(receivedContexts[0]).toBe(order.context)
-    expect(receivedContexts[1]).toBe(order.context)
+    expectSameItems(receivedContexts, [order.context, order.context])
   })
 
   it('moves after the exit hook runs and before the enter hook runs', () => {
