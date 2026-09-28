@@ -18,26 +18,22 @@ export class TransitionRegistry {
   }
 
   /**
-   * Guards are ignored, so a transition is listed even if its guard would refuse it.
-   * The array keeps registration order.
+   * Finds the transitions from a state, in registration order. Give on as well to keep
+   * only those the event triggers. Guards are not asked.
    *
-   * @param {string} fromStateName - Name of the state to leave.
-   * @param {string} eventName - Name of the event being sent.
-   * @returns {Transition[]} - The transitions the event triggers from that state.
+   * @param {object} criteria - The names to match, with the same keys as defineTransition.
+   * @param {string} criteria.from - Name of the state the transitions leave.
+   * @param {string} [criteria.on] - Name of the event that triggers them.
+   * @returns {Transition[]} - The matching transitions, in a new array each time.
    */
-  findAll(fromStateName, eventName) {
-    return this.transitionsFrom(fromStateName).filter((transition) => transition.isTriggeredBy(eventName))
-  }
+  findAll({ from, on }) {
+    const transitionsFrom = this.#transitions.filter((transition) => transition.fromStateName === from)
 
-  /**
-   * Guards are ignored, so every way out is listed. The array is a copy,
-   * so changing it cannot affect the registry.
-   *
-   * @param {string} fromStateName - Name of the state to leave.
-   * @returns {Transition[]} - The transitions leaving that state, in registration order.
-   */
-  transitionsFrom(fromStateName) {
-    return this.#transitions.filter((transition) => transition.fromStateName === fromStateName)
+    if (on === undefined) {
+      return transitionsFrom
+    }
+
+    return transitionsFrom.filter((transition) => transition.isTriggeredBy(on))
   }
 
   /**

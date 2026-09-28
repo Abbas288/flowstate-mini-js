@@ -130,7 +130,7 @@ export class StateMachine {
    * @returns {string[]} - Names of the events leaving that state, each once, in the order first defined.
    */
   eventNamesFrom(fromStateName) {
-    const eventNames = this.#transitions.transitionsFrom(fromStateName).map((transition) => transition.eventName)
+    const eventNames = this.#transitions.findAll({ from: fromStateName }).map((transition) => transition.eventName)
 
     return [...new Set(eventNames)]
   }
@@ -190,7 +190,7 @@ export class StateMachine {
    */
   #findAllowedTransition(eventName) {
     return this.#transitions
-      .findAll(this.#currentStateName, eventName)
+      .findAll({ from: this.#currentStateName, on: eventName })
       .find((candidate) => candidate.isAllowedIn(this.#context))
   }
 
@@ -202,7 +202,7 @@ export class StateMachine {
    * @param {string} eventName - Name of the event that was refused.
    */
   #throwRefusedEventError(eventName) {
-    const candidates = this.#transitions.findAll(this.#currentStateName, eventName)
+    const candidates = this.#transitions.findAll({ from: this.#currentStateName, on: eventName })
 
     if (candidates.length === 0) {
       throw new NoTransitionError(this.#currentStateName, eventName)
