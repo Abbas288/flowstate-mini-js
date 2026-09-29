@@ -41,7 +41,7 @@ describe('Transition', () => {
     expect(transition.isTriggeredBy('Pay')).toBe(false)
   })
 
-  it('answers false instead of throwing an error when asked about a non-string', () => {
+  it('answers false instead of throwing an error when the event name is not a non-empty string', () => {
     const transition = new Transition(validPayMove)
 
     for (const invalidName of invalidNames) {
