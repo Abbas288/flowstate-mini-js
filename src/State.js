@@ -24,7 +24,8 @@ export class State {
   }
 
   /**
-   * The name cannot be changed after the state has been created.
+   * Gets the name of the state. The name cannot be changed after the state has been
+   * created.
    *
    * @returns {string} - The name identifying this state.
    */

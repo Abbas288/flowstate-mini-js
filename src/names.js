@@ -21,7 +21,7 @@ class Name {
   }
 
   /**
-   * Gives the name as the string it was created from.
+   * Gets the name as the string it was created from.
    *
    * @returns {string} - The name, exactly as given.
    */

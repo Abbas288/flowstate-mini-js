@@ -48,7 +48,7 @@ class StateNameError extends FlowStateError {
   }
 
   /**
-   * Gives the name on its own, so that code does not have to parse the message.
+   * Gets the state name on its own, so that code does not have to parse the message.
    *
    * @returns {string} - The state name the error is about.
    */
@@ -111,7 +111,8 @@ class RefusedEventError extends FlowStateError {
   }
 
   /**
-   * The machine is still in this state, since a refused event changes nothing.
+   * Gets the name of the state the machine was in when it refused the event. The
+   * machine is still in that state, since a refused event changes nothing.
    *
    * @returns {string} - Name of the state the machine was in.
    */
@@ -120,7 +121,7 @@ class RefusedEventError extends FlowStateError {
   }
 
   /**
-   * This is the name exactly as it was sent, not a cleaned-up form of it.
+   * Gets the event name exactly as it was sent, not a cleaned-up form of it.
    *
    * @returns {string} - Name of the event that was sent.
    */
@@ -168,7 +169,8 @@ class BlockedTransitionError extends RefusedEventError {
   }
 
   /**
-   * The machine would have moved here if the guard had allowed it.
+   * Gets the name of the state the machine would have entered if the guard had allowed
+   * the move.
    *
    * @returns {string} - Name of the state the transition would have entered.
    */

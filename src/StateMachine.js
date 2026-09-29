@@ -26,7 +26,8 @@ export class StateMachine {
   }
 
   /**
-   * Changes only when send moves the machine. It cannot be set from outside.
+   * Gets the name of the state the machine is in. It changes only when send moves the
+   * machine, and it cannot be set from outside.
    *
    * @returns {string} - Name of the state the machine is in.
    */
@@ -35,8 +36,9 @@ export class StateMachine {
   }
 
   /**
-   * Holds your own data for guards and hooks. Every guard and hook receives this same
-   * object, so a value written here can be read there. The object cannot be replaced.
+   * Gets the object that holds your own data for guards and hooks. Every guard and hook
+   * receives this same object, so a value written here can be read there. The object
+   * cannot be replaced.
    *
    * @returns {object} - The context every hook and guard is handed.
    */
@@ -45,8 +47,8 @@ export class StateMachine {
   }
 
   /**
-   * Lists the states defined so far. The array is a copy, so changing it does not
-   * change the machine.
+   * Gets the names of the states defined so far. The array is a copy, so changing it
+   * does not change the machine.
    *
    * @returns {string[]} - Names of every defined state, in definition order.
    */

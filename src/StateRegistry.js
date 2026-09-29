@@ -31,7 +31,8 @@ export class StateRegistry {
   }
 
   /**
-   * A name that is not registered gives undefined, the way Map.get does.
+   * Gets the state registered under the name. A name that is not registered gives
+   * undefined, the way Map.get does.
    *
    * @param {string} name - The name to look for.
    * @returns {State|undefined} - The state under that name, or undefined if there is none.
@@ -41,7 +42,8 @@ export class StateRegistry {
   }
 
   /**
-   * Builds a new array on every access, so the caller cannot change the registry.
+   * Gets the names of the registered states. The array is new on every access, so the
+   * caller cannot change the registry.
    *
    * @returns {string[]} - Names of every registered state, in registration order.
    */
