@@ -1,3 +1,5 @@
+import { EventName, StateName } from './names.js'
+
 /**
  * One allowed move from one state to another, triggered by a named event.
  */
@@ -18,9 +20,9 @@ export class Transition {
    * @param {(context: object) => boolean} [move.guard] - Decides if the move is allowed.
    */
   constructor({ from, to, on, guard } = {}) {
-    this.#fromStateName = this.#requireName(from, 'from')
-    this.#toStateName = this.#requireName(to, 'to')
-    this.#eventName = this.#requireName(on, 'on')
+    this.#fromStateName = new StateName(from)
+    this.#toStateName = new StateName(to)
+    this.#eventName = new EventName(on)
     this.#guard = this.#requireOptionalGuard(guard)
   }
 
@@ -30,7 +32,7 @@ export class Transition {
    * @returns {string} - Name of the state it leaves.
    */
   get fromStateName() {
-    return this.#fromStateName
+    return this.#fromStateName.text
   }
 
   /**
@@ -39,7 +41,7 @@ export class Transition {
    * @returns {string} - Name of the state it enters.
    */
   get toStateName() {
-    return this.#toStateName
+    return this.#toStateName.text
   }
 
   /**
@@ -48,7 +50,7 @@ export class Transition {
    * @returns {string} - Name of the event that triggers this transition.
    */
   get eventName() {
-    return this.#eventName
+    return this.#eventName.text
   }
 
   /**
@@ -59,7 +61,7 @@ export class Transition {
    * @returns {boolean} - True if that event triggers this transition.
    */
   isTriggeredBy(eventName) {
-    return this.#eventName === eventName
+    return this.#eventName.text === eventName
   }
 
   /**
@@ -75,22 +77,6 @@ export class Transition {
     }
 
     return Boolean(this.#guard(context))
-  }
-
-  /**
-   * Returns the value unchanged if it can be used as a name, and throws a TypeError
-   * otherwise.
-   *
-   * @param {*} value - The value to check.
-   * @param {string} label - Field name, used in the error message.
-   * @returns {string} - The same value.
-   */
-  #requireName(value, label) {
-    if (typeof value !== 'string' || value.trim() === '') {
-      throw new TypeError(`Transition ${label} must be a non-empty string.`)
-    }
-
-    return value
   }
 
   /**

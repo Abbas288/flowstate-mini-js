@@ -129,7 +129,7 @@ describe('Transition', () => {
     expect(() => new Transition()).toThrow(TypeError)
   })
 
-  it('names the missing part in the error message', () => {
-    expect(() => new Transition({ from: 'placed', to: 'paid' })).toThrow('Transition on must be a non-empty string.')
+  it('says in the error message that the event name is missing', () => {
+    expect(() => new Transition({ from: 'placed', to: 'paid' })).toThrow('EventName must be a non-empty string.')
   })
 })

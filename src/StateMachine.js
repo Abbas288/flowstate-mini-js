@@ -3,6 +3,7 @@ import { StateRegistry } from './StateRegistry.js'
 import { Transition } from './Transition.js'
 import { TransitionRegistry } from './TransitionRegistry.js'
 import { BlockedTransitionError, NoTransitionError, UnknownStateError } from './errors.js'
+import { EventName, StateName } from './names.js'
 
 /**
  * A finite state machine. It is in one state at a time and moves to another state
@@ -21,7 +22,7 @@ export class StateMachine {
    * @param {string} initialStateName - Name of the state the machine starts in.
    */
   constructor(initialStateName) {
-    this.#currentStateName = this.#requireName(initialStateName, 'Initial state name')
+    this.#currentStateName = new StateName(initialStateName).text
   }
 
   /**
@@ -136,22 +137,6 @@ export class StateMachine {
   }
 
   /**
-   * Returns the value unchanged if it can be used as a name, and throws a TypeError
-   * otherwise.
-   *
-   * @param {*} value - The value to check.
-   * @param {string} label - What the name is for, used to open the error message.
-   * @returns {string} - The same value.
-   */
-  #requireName(value, label) {
-    if (typeof value !== 'string' || value.trim() === '') {
-      throw new TypeError(`${label} must be a non-empty string.`)
-    }
-
-    return value
-  }
-
-  /**
    * Throws unless a state with that name has been defined on this machine.
    *
    * @param {string} stateName - The name to look for.
@@ -164,11 +149,12 @@ export class StateMachine {
 
   /**
    * Throws unless the event name is a non-empty string and the current state is defined.
+   * Creating an EventName is what checks the event name.
    *
    * @param {*} eventName - The value to check.
    */
   #requireReadyToSend(eventName) {
-    this.#requireName(eventName, 'Event name')
+    new EventName(eventName)
     this.#requireDefinedState(this.#currentStateName)
   }
 

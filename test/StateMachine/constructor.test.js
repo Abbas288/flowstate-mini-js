@@ -16,8 +16,8 @@ describe('StateMachine', () => {
       }
     })
 
-    it('says which name was wrong', () => {
-      expect(() => new StateMachine('')).toThrow('Initial state name must be a non-empty string.')
+    it('says in the error message that the state name was wrong', () => {
+      expect(() => new StateMachine('')).toThrow('StateName must be a non-empty string.')
     })
 
     it('keeps machines independent of each other', () => {

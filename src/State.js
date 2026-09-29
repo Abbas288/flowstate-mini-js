@@ -1,3 +1,5 @@
+import { StateName } from './names.js'
+
 /**
  * A single named state in a state machine.
  */
@@ -16,7 +18,7 @@ export class State {
    * @param {(context: object) => void} [options.onExit] - Runs on leaving this state.
    */
   constructor(name, { onEnter, onExit } = {}) {
-    this.#name = this.#requireName(name)
+    this.#name = new StateName(name)
     this.#onEnter = this.#requireOptionalHook(onEnter, 'onEnter')
     this.#onExit = this.#requireOptionalHook(onExit, 'onExit')
   }
@@ -27,7 +29,7 @@ export class State {
    * @returns {string} - The name identifying this state.
    */
   get name() {
-    return this.#name
+    return this.#name.text
   }
 
   /**
@@ -50,21 +52,6 @@ export class State {
     if (this.#onExit !== undefined) {
       this.#onExit(context)
     }
-  }
-
-  /**
-   * Returns the value unchanged if it can be used as this state's name, and throws a
-   * TypeError otherwise.
-   *
-   * @param {*} value - The value to check.
-   * @returns {string} - The same value.
-   */
-  #requireName(value) {
-    if (typeof value !== 'string' || value.trim() === '') {
-      throw new TypeError('State name must be a non-empty string.')
-    }
-
-    return value
   }
 
   /**
