@@ -112,5 +112,19 @@ describe('StateMachine', () => {
       expect(() => order.canSend('pay')).toThrow(UnknownStateError)
       expect(() => order.canSend('pay')).toThrow(expect.objectContaining({ stateName: 'draft' }))
     })
+
+    it('passes on an error that the guard throws, instead of answering false', () => {
+      const order = machineWithStates('placed', 'paid')
+      order.defineTransition({
+        from: 'placed',
+        to: 'paid',
+        on: 'pay',
+        guard: () => {
+          throw new Error('guard failed')
+        },
+      })
+
+      expect(() => order.canSend('pay')).toThrow('guard failed')
+    })
   })
 })
