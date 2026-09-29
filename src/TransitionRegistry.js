@@ -10,6 +10,7 @@ export class TransitionRegistry {
    * Stores a transition for later lookup. Two identical transitions are both kept.
    *
    * @param {Transition} transition - The transition to store.
+   * @throws {TypeError} If the value is not a Transition.
    */
   register(transition) {
     this.#requireTransition(transition)

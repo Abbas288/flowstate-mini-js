@@ -18,6 +18,7 @@ export class Transition {
    * @param {string} move.to - Name of the state to enter.
    * @param {string} move.on - Name of the triggering event.
    * @param {(context: object) => boolean} [move.guard] - Decides if the move is allowed.
+   * @throws {TypeError} If from, to or on is not a non-empty string, or the guard is not a function.
    */
   constructor({ from, to, on, guard } = {}) {
     this.#fromStateName = new StateName(from)

@@ -9,13 +9,13 @@ export class State {
   #onExit
 
   /**
-   * Creates a state. Both hooks are optional. Throws a TypeError if the name or a
-   * hook has the wrong type.
+   * Creates a state. Both hooks are optional.
    *
    * @param {string} name - Identifies the state within its machine.
    * @param {object} [options] - The hooks to run on the way in and out.
    * @param {(context: object) => void} [options.onEnter] - Runs on entering this state.
    * @param {(context: object) => void} [options.onExit] - Runs on leaving this state.
+   * @throws {TypeError} If the name is not a non-empty string, or a hook is not a function.
    */
   constructor(name, { onEnter, onExit } = {}) {
     this.#name = new StateName(name)

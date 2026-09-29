@@ -12,6 +12,8 @@ export class StateRegistry {
    * replacing a state would silently throw away the earlier one's hooks.
    *
    * @param {State} state - The state to store.
+   * @throws {TypeError} If the value is not a State.
+   * @throws {DuplicateStateError} If a state with the same name is already registered.
    */
   register(state) {
     this.#requireState(state)

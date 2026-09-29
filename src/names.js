@@ -7,10 +7,10 @@ class Name {
   #text
 
   /**
-   * Creates a name. Throws a TypeError, named after the concrete class, if the value is
-   * not a string, or if it is empty or holds only whitespace.
+   * Creates a name. The error message names the concrete class, StateName or EventName.
    *
    * @param {*} value - The value to use as a name.
+   * @throws {TypeError} If the value is not a string, or is empty or holds only whitespace.
    */
   constructor(value) {
     if (typeof value !== 'string' || value.trim() === '') {
