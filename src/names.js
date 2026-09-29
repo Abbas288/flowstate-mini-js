@@ -1,7 +1,6 @@
 /**
- * Holds the text shared by the two kinds of name below. A name is a string that holds at
- * least one character other than whitespace, and it is kept exactly as given. It is not
- * exported.
+ * Holds the text shared by the two kinds of name below. A name is a non-empty string
+ * without whitespace at the start or end. It is not exported.
  */
 class Name {
   #text
@@ -10,11 +9,11 @@ class Name {
    * Creates a name. The error message names the concrete class, StateName or EventName.
    *
    * @param {*} value - The value to use as a name.
-   * @throws {TypeError} If the value is not a string, or is empty or holds only whitespace.
+   * @throws {TypeError} If the value is not a non-empty string, or starts or ends with whitespace.
    */
   constructor(value) {
-    if (typeof value !== 'string' || value.trim() === '') {
-      throw new TypeError(`${this.constructor.name} must be a non-empty string.`)
+    if (typeof value !== 'string' || this.#isEmpty(value) || this.#startsOrEndsWithWhitespace(value)) {
+      throw new TypeError(`${this.constructor.name} must be a non-empty string without whitespace at the start or end.`)
     }
 
     this.#text = value
@@ -27,6 +26,27 @@ class Name {
    */
   get text() {
     return this.#text
+  }
+
+  /**
+   * Tells whether the string has no characters at all.
+   *
+   * @param {string} value - The string to check.
+   * @returns {boolean} True if the string is empty.
+   */
+  #isEmpty(value) {
+    return value === ''
+  }
+
+  /**
+   * Tells whether the string starts or ends with whitespace, such as a space, a tab or a
+   * line break.
+   *
+   * @param {string} value - The string to check.
+   * @returns {boolean} True if trimming the string would change it.
+   */
+  #startsOrEndsWithWhitespace(value) {
+    return value.trim() !== value
   }
 }
 

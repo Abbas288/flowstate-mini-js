@@ -121,7 +121,7 @@ class RefusedEventError extends FlowStateError {
   }
 
   /**
-   * Gets the event name exactly as it was sent, not a cleaned-up form of it.
+   * Gets the name of the event the machine refused.
    *
    * @returns {string} Name of the event that was sent.
    */

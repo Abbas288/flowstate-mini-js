@@ -14,10 +14,10 @@ describe.each(nameClasses)('%s', (className, NameClass) => {
     expect(name.text).toBe('paid')
   })
 
-  it('keeps the text exactly as given, surrounding spaces included', () => {
-    const name = new NameClass(' paid ')
+  it('keeps spaces inside the name', () => {
+    const name = new NameClass('on hold')
 
-    expect(name.text).toBe(' paid ')
+    expect(name.text).toBe('on hold')
   })
 
   it('rejects a value that is not a non-empty string', () => {
@@ -26,8 +26,16 @@ describe.each(nameClasses)('%s', (className, NameClass) => {
     }
   })
 
+  it('rejects a name that starts or ends with whitespace', () => {
+    for (const paddedName of [' paid', 'paid ', '\tpaid', 'paid\n']) {
+      expect(() => new NameClass(paddedName)).toThrow(TypeError)
+    }
+  })
+
   it('names its own class in the error message', () => {
-    expect(() => new NameClass('')).toThrow(`${className} must be a non-empty string.`)
+    expect(() => new NameClass('')).toThrow(
+      `${className} must be a non-empty string without whitespace at the start or end.`
+    )
   })
 
   it('does not let the text be written from outside', () => {

@@ -20,7 +20,7 @@ export class StateMachine {
    * the machine has been created, but it must be defined before the first event is sent.
    *
    * @param {string} initialStateName - Name of the state the machine starts in.
-   * @throws {TypeError} If the name is not a non-empty string.
+   * @throws {TypeError} If the name is not a non-empty string, or starts or ends with whitespace.
    */
   constructor(initialStateName) {
     this.#currentStateName = new StateName(initialStateName).text
@@ -66,7 +66,8 @@ export class StateMachine {
    * @param {(context: object) => void} [options.onEnter] - Runs on entering this state.
    * @param {(context: object) => void} [options.onExit] - Runs on leaving this state.
    * @returns {StateMachine} This machine, so that definitions can be chained.
-   * @throws {TypeError} If the name is not a non-empty string, or a hook is not a function.
+   * @throws {TypeError} If the name is not a non-empty string, or starts or ends with whitespace.
+   * @throws {TypeError} If a hook is not a function.
    * @throws {DuplicateStateError} If a state with the name is already defined.
    */
   defineState(name, options) {
@@ -85,7 +86,8 @@ export class StateMachine {
    * @param {string} move.on - Name of the triggering event.
    * @param {(context: object) => boolean} [move.guard] - Decides if the move is allowed.
    * @returns {StateMachine} This machine, so that definitions can be chained.
-   * @throws {TypeError} If from, to or on is not a non-empty string, or the guard is not a function.
+   * @throws {TypeError} If from, to or on is not a non-empty string, or starts or ends with whitespace.
+   * @throws {TypeError} If the guard is not a function.
    * @throws {UnknownStateError} If the from state or the to state has not been defined.
    */
   defineTransition(move) {
@@ -103,7 +105,7 @@ export class StateMachine {
    * onEnter of the new one.
    *
    * @param {string} eventName - Name of the event to send.
-   * @throws {TypeError} If the event name is not a non-empty string.
+   * @throws {TypeError} If the event name is not a non-empty string, or starts or ends with whitespace.
    * @throws {UnknownStateError} If the starting state has not been defined yet.
    * @throws {NoTransitionError} If no transition leaves the current state on the event.
    * @throws {BlockedTransitionError} If such transitions exist, but every guard refuses the move.
@@ -123,7 +125,7 @@ export class StateMachine {
    *
    * @param {string} eventName - Name of the event to ask about.
    * @returns {boolean} True if send would move the machine now, false if send would refuse the event.
-   * @throws {TypeError} If the event name is not a non-empty string.
+   * @throws {TypeError} If the event name is not a non-empty string, or starts or ends with whitespace.
    * @throws {UnknownStateError} If the starting state has not been defined yet.
    * @throws {*} Any error that a guard throws, passed on unchanged.
    */
@@ -169,7 +171,7 @@ export class StateMachine {
   }
 
   /**
-   * Throws unless the event name is a non-empty string and the current state is defined.
+   * Throws unless the event name is a valid EventName and the current state is defined.
    * Creating an EventName is what checks the event name.
    *
    * @param {*} eventName - The value to check.
