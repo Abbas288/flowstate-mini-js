@@ -1,4 +1,9 @@
-import { Transition } from './Transition.js'
+/**
+ * The Transition type, for the JSDoc below. It is a type only, so loading the errors
+ * does not load the Transition class.
+ *
+ * @typedef {import('./Transition.js').Transition} Transition
+ */
 
 /**
  * Base class for every error the machine throws when one of its rules is broken.
