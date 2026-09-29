@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Transition } from '../src/Transition.js'
-
-const validMove = { from: 'placed', to: 'paid', on: 'pay' }
-const invalidNames = [undefined, null, '', '   ', 42, {}, ['idle']]
+import { invalidFunctions, invalidNames, validPayMove } from './helpers/fixtures.js'
 
 describe('Transition', () => {
   it('exposes the move it was given', () => {
@@ -21,30 +19,30 @@ describe('Transition', () => {
 
   it.each(['from', 'to', 'on'])('rejects %s unless it is a non-empty string', (field) => {
     for (const invalidName of invalidNames) {
-      expect(() => new Transition({ ...validMove, [field]: invalidName })).toThrow(TypeError)
+      expect(() => new Transition({ ...validPayMove, [field]: invalidName })).toThrow(TypeError)
     }
   })
 
   it('is triggered by the event it was built with', () => {
-    const transition = new Transition(validMove)
+    const transition = new Transition(validPayMove)
 
     expect(transition.isTriggeredBy('pay')).toBe(true)
   })
 
   it('is not triggered by any other event', () => {
-    const transition = new Transition(validMove)
+    const transition = new Transition(validPayMove)
 
     expect(transition.isTriggeredBy('ship')).toBe(false)
   })
 
   it('tells events apart by case', () => {
-    const transition = new Transition(validMove)
+    const transition = new Transition(validPayMove)
 
     expect(transition.isTriggeredBy('Pay')).toBe(false)
   })
 
   it('answers false instead of throwing an error when asked about a non-string', () => {
-    const transition = new Transition(validMove)
+    const transition = new Transition(validPayMove)
 
     for (const invalidName of invalidNames) {
       expect(transition.isTriggeredBy(invalidName)).toBe(false)
@@ -52,44 +50,42 @@ describe('Transition', () => {
   })
 
   it('accepts a move without a guard', () => {
-    expect(() => new Transition(validMove)).not.toThrow()
+    expect(() => new Transition(validPayMove)).not.toThrow()
   })
 
   it('accepts a function as a guard', () => {
     const validGuard = (ctx) => ctx.amount > 0
 
-    expect(() => new Transition({ ...validMove, guard: validGuard })).not.toThrow()
+    expect(() => new Transition({ ...validPayMove, guard: validGuard })).not.toThrow()
   })
 
   it('rejects a guard that is not a function', () => {
-    const invalidGuards = ['always', 42, {}, null, true, ['guard']]
-
-    for (const invalidGuard of invalidGuards) {
-      expect(() => new Transition({ ...validMove, guard: invalidGuard })).toThrow(TypeError)
+    for (const invalidGuard of invalidFunctions) {
+      expect(() => new Transition({ ...validPayMove, guard: invalidGuard })).toThrow(TypeError)
     }
   })
 
   it('is allowed in any context when it has no guard', () => {
-    const transition = new Transition(validMove)
+    const transition = new Transition(validPayMove)
 
     expect(transition.isAllowedIn({})).toBe(true)
   })
 
   it('is allowed when its guard returns true', () => {
-    const transition = new Transition({ ...validMove, guard: () => true })
+    const transition = new Transition({ ...validPayMove, guard: () => true })
 
     expect(transition.isAllowedIn({})).toBe(true)
   })
 
   it('is not allowed when its guard returns false', () => {
-    const transition = new Transition({ ...validMove, guard: () => false })
+    const transition = new Transition({ ...validPayMove, guard: () => false })
 
     expect(transition.isAllowedIn({})).toBe(false)
   })
 
   it('passes the context on to its guard', () => {
     const transition = new Transition({
-      ...validMove,
+      ...validPayMove,
       guard: (ctx) => ctx.amount > 0,
     })
 
@@ -103,7 +99,7 @@ describe('Transition', () => {
     ['an empty array', []],
     ['an empty object', {}],
   ])('allows the move when its guard returns %s', (_description, guardResult) => {
-    const transition = new Transition({ ...validMove, guard: () => guardResult })
+    const transition = new Transition({ ...validPayMove, guard: () => guardResult })
 
     expect(transition.isAllowedIn({})).toBe(true)
   })
@@ -115,14 +111,14 @@ describe('Transition', () => {
     ['undefined', undefined],
     ['NaN', NaN],
   ])('blocks the move when its guard returns %s', (_description, guardResult) => {
-    const transition = new Transition({ ...validMove, guard: () => guardResult })
+    const transition = new Transition({ ...validPayMove, guard: () => guardResult })
 
     expect(transition.isAllowedIn({})).toBe(false)
   })
 
   it('asks its guard again on every call', () => {
     let allowed = false
-    const transition = new Transition({ ...validMove, guard: () => allowed })
+    const transition = new Transition({ ...validPayMove, guard: () => allowed })
 
     expect(transition.isAllowedIn({})).toBe(false)
     allowed = true

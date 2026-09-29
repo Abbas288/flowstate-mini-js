@@ -2,10 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { StateMachine } from '../src/StateMachine.js'
 import { BlockedTransitionError, DuplicateStateError, NoTransitionError, UnknownStateError } from '../src/errors.js'
 import { expectSameItems } from './helpers/expectSameItems.js'
-
-const invalidNames = [undefined, null, '', '   ', 42, {}, ['placed']]
-const invalidFunctions = ['always', 42, {}, null, true, ['guard']]
-const validMove = { from: 'placed', to: 'paid', on: 'pay' }
+import { invalidFunctions, invalidNames, validPayMove } from './helpers/fixtures.js'
 
 /**
  * Builds a machine that starts in the first name given and has all of them
@@ -237,7 +234,7 @@ describe('StateMachine', () => {
       const order = machineWithStates('placed', 'paid')
 
       for (const invalidName of invalidNames) {
-        expect(() => order.defineTransition({ ...validMove, [field]: invalidName })).toThrow(TypeError)
+        expect(() => order.defineTransition({ ...validPayMove, [field]: invalidName })).toThrow(TypeError)
       }
     })
 
@@ -245,7 +242,7 @@ describe('StateMachine', () => {
       const order = machineWithStates('placed', 'paid')
 
       for (const invalidGuard of invalidFunctions) {
-        expect(() => order.defineTransition({ ...validMove, guard: invalidGuard })).toThrow(TypeError)
+        expect(() => order.defineTransition({ ...validPayMove, guard: invalidGuard })).toThrow(TypeError)
       }
     })
 

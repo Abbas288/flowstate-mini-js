@@ -2,14 +2,14 @@ import { describe, expect, it } from 'vitest'
 import { Transition } from '../src/Transition.js'
 import { TransitionRegistry } from '../src/TransitionRegistry.js'
 import { expectSameItems } from './helpers/expectSameItems.js'
+import { validPayMove } from './helpers/fixtures.js'
 
-const payMove = { from: 'placed', to: 'paid', on: 'pay' }
-const shipMove = { from: 'paid', to: 'shipped', on: 'ship' }
+const validShipMove = { from: 'paid', to: 'shipped', on: 'ship' }
 
 describe('TransitionRegistry', () => {
   it('finds a transition by the state it leaves and the event it answers to', () => {
     const registry = new TransitionRegistry()
-    const pay = new Transition(payMove)
+    const pay = new Transition(validPayMove)
 
     registry.register(pay)
 
@@ -24,14 +24,14 @@ describe('TransitionRegistry', () => {
 
   it('finds nothing when the event does not match', () => {
     const registry = new TransitionRegistry()
-    registry.register(new Transition(payMove))
+    registry.register(new Transition(validPayMove))
 
     expect(registry.findAll({ from: 'placed', on: 'ship' })).toEqual([])
   })
 
   it('finds nothing when the state does not match', () => {
     const registry = new TransitionRegistry()
-    registry.register(new Transition(payMove))
+    registry.register(new Transition(validPayMove))
 
     expect(registry.findAll({ from: 'paid', on: 'pay' })).toEqual([])
   })
@@ -50,8 +50,8 @@ describe('TransitionRegistry', () => {
 
   it('finds every match in registration order, alike ones included', () => {
     const registry = new TransitionRegistry()
-    const first = new Transition(payMove)
-    const second = new Transition(payMove)
+    const first = new Transition(validPayMove)
+    const second = new Transition(validPayMove)
 
     registry.register(first)
     registry.register(second)
@@ -61,7 +61,7 @@ describe('TransitionRegistry', () => {
 
   it('ignores guards when searching', () => {
     const registry = new TransitionRegistry()
-    const guardedPay = new Transition({ ...payMove, guard: () => false })
+    const guardedPay = new Transition({ ...validPayMove, guard: () => false })
 
     registry.register(guardedPay)
 
@@ -72,24 +72,24 @@ describe('TransitionRegistry', () => {
     const orders = new TransitionRegistry()
     const invoices = new TransitionRegistry()
 
-    orders.register(new Transition(payMove))
+    orders.register(new Transition(validPayMove))
 
     expect(invoices.findAll({ from: 'placed', on: 'pay' })).toEqual([])
   })
 
   it('cannot be changed through the matches it returns', () => {
     const registry = new TransitionRegistry()
-    const pay = new Transition(payMove)
+    const pay = new Transition(validPayMove)
     registry.register(pay)
 
-    registry.findAll({ from: 'placed', on: 'pay' }).push(new Transition(payMove))
+    registry.findAll({ from: 'placed', on: 'pay' }).push(new Transition(validPayMove))
 
     expectSameItems(registry.findAll({ from: 'placed', on: 'pay' }), [pay])
   })
 
   it('lists every way out of a state, in registration order', () => {
     const registry = new TransitionRegistry()
-    const pay = new Transition(payMove)
+    const pay = new Transition(validPayMove)
     const cancel = new Transition({ from: 'placed', to: 'void', on: 'cancel' })
 
     registry.register(pay)
@@ -100,7 +100,7 @@ describe('TransitionRegistry', () => {
 
   it('lists no way out of a state that has none', () => {
     const registry = new TransitionRegistry()
-    registry.register(new Transition(payMove))
+    registry.register(new Transition(validPayMove))
 
     expect(registry.findAll({ from: 'shipped' })).toEqual([])
   })
@@ -113,17 +113,17 @@ describe('TransitionRegistry', () => {
 
   it('leaves out transitions that start somewhere else', () => {
     const registry = new TransitionRegistry()
-    const pay = new Transition(payMove)
+    const pay = new Transition(validPayMove)
 
     registry.register(pay)
-    registry.register(new Transition(shipMove))
+    registry.register(new Transition(validShipMove))
 
     expectSameItems(registry.findAll({ from: 'placed' }), [pay])
   })
 
   it('lists a transition even when its guard says no', () => {
     const registry = new TransitionRegistry()
-    const guardedPay = new Transition({ ...payMove, guard: () => false })
+    const guardedPay = new Transition({ ...validPayMove, guard: () => false })
 
     registry.register(guardedPay)
 
@@ -141,17 +141,17 @@ describe('TransitionRegistry', () => {
 
   it('cannot be changed through the list it returns', () => {
     const registry = new TransitionRegistry()
-    const pay = new Transition(payMove)
+    const pay = new Transition(validPayMove)
     registry.register(pay)
 
-    registry.findAll({ from: 'placed' }).push(new Transition(shipMove))
+    registry.findAll({ from: 'placed' }).push(new Transition(validShipMove))
 
     expectSameItems(registry.findAll({ from: 'placed' }), [pay])
   })
 
   it('rejects values that are not transitions', () => {
     const registry = new TransitionRegistry()
-    const nonTransitions = ['pay', 42, {}, payMove, null, undefined]
+    const nonTransitions = ['pay', 42, {}, validPayMove, null, undefined]
 
     for (const nonTransition of nonTransitions) {
       expect(() => registry.register(nonTransition)).toThrow(TypeError)

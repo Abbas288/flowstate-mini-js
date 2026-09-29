@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { State } from '../src/State.js'
+import { invalidFunctions, invalidNames } from './helpers/fixtures.js'
 
 describe('State', () => {
   it('exposes the name it was given', () => {
@@ -9,8 +10,6 @@ describe('State', () => {
   })
 
   it('rejects a name that is not a non-empty string', () => {
-    const invalidNames = [undefined, null, '', '   ', 42, {}, ['idle']]
-
     for (const invalidName of invalidNames) {
       expect(() => new State(invalidName)).toThrow(TypeError)
     }
@@ -36,9 +35,7 @@ describe('State', () => {
   })
 
   it('rejects an onEnter that is not a function', () => {
-    const invalidHooks = ['not-a-function', 42, {}, null]
-
-    for (const invalidHook of invalidHooks) {
+    for (const invalidHook of invalidFunctions) {
       expect(() => new State('x', { onEnter: invalidHook })).toThrow(TypeError)
     }
   })
@@ -76,9 +73,7 @@ describe('State', () => {
   })
 
   it('rejects an onExit that is not a function', () => {
-    const invalidHooks = ['not-a-function', 42, {}, null]
-
-    for (const invalidHook of invalidHooks) {
+    for (const invalidHook of invalidFunctions) {
       expect(() => new State('x', { onExit: invalidHook })).toThrow(TypeError)
     }
   })
