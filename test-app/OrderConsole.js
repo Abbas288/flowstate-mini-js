@@ -9,8 +9,15 @@ import { FlowStateError } from 'flowstate-mini-js'
 export class OrderConsole {
   #machine
 
-  // The commands you can type, by their first word.
-  #commands = new Map([['send', (eventName) => this.#machine.send(eventName)]])
+  // The commands you can type, by their first word. #printHelp describes them.
+  #commands = new Map([
+    ['send', (eventName) => this.#machine.send(eventName)],
+    ['can', (eventName) => this.#printCanSend(eventName)],
+    ['events', (stateName) => this.#printEventNames(stateName)],
+    ['states', () => this.#printStateNames()],
+    ['amount', (amount) => this.#setAmount(amount)],
+    ['help', () => this.#printHelp()],
+  ])
 
   /**
    * Creates a console for a machine. Nothing is read until start is called.
@@ -27,7 +34,8 @@ export class OrderConsole {
   async start() {
     const terminal = createInterface({ input: stdin, output: stdout })
 
-    console.log('Type send <event> to send an event, or quit to stop.')
+    console.log('Test-App for flowstate-mini-js: an order that is placed, paid, shipped and delivered.')
+    this.#printHelp()
     this.#askForCommand(terminal)
 
     for await (const line of terminal) {
@@ -74,6 +82,59 @@ export class OrderConsole {
     } else {
       console.log(`  Unknown command "${commandName}".`)
     }
+  }
+
+  /**
+   * Prints whether send would take the event right now, without sending it.
+   *
+   * @param {string} eventName - Name of the event to ask about.
+   */
+  #printCanSend(eventName) {
+    console.log(`  canSend("${eventName}"):`, this.#machine.canSend(eventName))
+  }
+
+  /**
+   * Prints the events that have a transition out of the state.
+   *
+   * @param {string} [stateName] - Name of the state. Without it, the current state is used.
+   */
+  #printEventNames(stateName = this.#machine.currentStateName) {
+    console.log(`  eventNamesFrom("${stateName}"):`, this.#machine.eventNamesFrom(stateName))
+  }
+
+  /**
+   * Prints the names of all defined states.
+   */
+  #printStateNames() {
+    console.log('  stateNames:', this.#machine.stateNames)
+  }
+
+  /**
+   * Sets the amount in the context. The guard on pay allows the move only above 0.
+   *
+   * @param {string} amount - The amount as typed, such as "250".
+   */
+  #setAmount(amount) {
+    this.#machine.context.amount = Number(amount)
+    console.log('  context.amount:', this.#machine.context.amount)
+  }
+
+  /**
+   * Prints the commands you can type.
+   */
+  #printHelp() {
+    console.log(
+      [
+        'Commands:',
+        '  send <event>     Send an event, such as send pay.',
+        '  can <event>      Ask if send would take the event, without sending it.',
+        '  events [state]   List the events out of a state. Without a state, the current one.',
+        '  states           List the states.',
+        '  amount <number>  Set the amount. Paying needs an amount above 0. It starts at 0.',
+        '  help             Show this list.',
+        '  quit             Stop the app.',
+      ].join('\n')
+    )
   }
 
   /**
