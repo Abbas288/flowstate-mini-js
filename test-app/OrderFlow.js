@@ -6,11 +6,15 @@ import { StateMachine } from 'flowstate-mini-js'
  */
 export class OrderFlow {
   #machine = new StateMachine('placed')
+  #print
 
   /**
    * Defines the states and transitions, and starts the order with an amount of 0.
+   *
+   * @param {(text: string) => void} print - Receives each line the hooks report, such as console.log.
    */
-  constructor() {
+  constructor(print) {
+    this.#print = print
     this.#defineStates()
     this.#defineTransitions()
     this.#machine.context.amount = 0
@@ -50,14 +54,14 @@ export class OrderFlow {
    * The onEnter hook of every state. The state has already changed when it runs.
    */
   #printEnter = () => {
-    console.log(`  onEnter of ${this.#machine.currentStateName}`)
+    this.#print(`  onEnter of ${this.#machine.currentStateName}`)
   }
 
   /**
    * The onExit hook of every state. The state has not changed yet when it runs.
    */
   #printExit = () => {
-    console.log(`  onExit of ${this.#machine.currentStateName}`)
+    this.#print(`  onExit of ${this.#machine.currentStateName}`)
   }
 
   /**
