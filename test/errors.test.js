@@ -34,6 +34,10 @@ describe('FlowStateError', () => {
     expect(error.message).toBe('something broke')
   })
 
+  it('is not a TypeError, so a caller can tell it apart from a wrong argument type', () => {
+    expect(new FlowStateError('x')).not.toBeInstanceOf(TypeError)
+  })
+
   it('is named after its own class', () => {
     expect(new FlowStateError('x').name).toBe('FlowStateError')
   })

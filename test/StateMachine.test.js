@@ -1,12 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { StateMachine } from '../src/StateMachine.js'
-import {
-  BlockedTransitionError,
-  DuplicateStateError,
-  FlowStateError,
-  NoTransitionError,
-  UnknownStateError,
-} from '../src/errors.js'
+import { BlockedTransitionError, DuplicateStateError, NoTransitionError, UnknownStateError } from '../src/errors.js'
 import { expectSameItems } from './helpers/expectSameItems.js'
 
 const invalidNames = [undefined, null, '', '   ', 42, {}, ['placed']]
@@ -162,15 +156,6 @@ describe('StateMachine', () => {
       expect(() => order.defineState('paid', { onExit: () => {} })).toThrow(DuplicateStateError)
     })
 
-    it('throws a FlowStateError, not a TypeError, for a duplicate state name', () => {
-      const order = new StateMachine('placed')
-
-      order.defineState('paid')
-
-      expect(() => order.defineState('paid')).toThrow(FlowStateError)
-      expect(() => order.defineState('paid')).not.toThrow(TypeError)
-    })
-
     it('does not list a state name twice when it refuses a duplicate', () => {
       const order = new StateMachine('placed')
 
@@ -286,14 +271,6 @@ describe('StateMachine', () => {
       const order = machineWithStates('placed', 'paid')
 
       expect(() => order.defineTransition({ from: 'placed', to: 'shipped', on: 'ship' })).toThrow(/shipped/)
-    })
-
-    it('throws a FlowStateError, not a TypeError, for a state that was never defined', () => {
-      const order = machineWithStates('placed', 'paid')
-      const moveToUnknownState = { from: 'placed', to: 'shipped', on: 'ship' }
-
-      expect(() => order.defineTransition(moveToUnknownState)).toThrow(FlowStateError)
-      expect(() => order.defineTransition(moveToUnknownState)).not.toThrow(TypeError)
     })
 
     it('checks the field types before it checks that the states exist', () => {
