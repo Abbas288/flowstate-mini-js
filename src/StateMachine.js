@@ -86,9 +86,7 @@ export class StateMachine {
   defineTransition(move) {
     const transition = new Transition(move)
 
-    this.#requireDefinedState(transition.fromStateName)
-    this.#requireDefinedState(transition.toStateName)
-
+    this.#requireBothStatesDefined(transition)
     this.#transitions.register(transition)
 
     return this
@@ -134,6 +132,17 @@ export class StateMachine {
     const eventNames = this.#transitions.findAll({ from: fromStateName }).map((transition) => transition.eventName)
 
     return [...new Set(eventNames)]
+  }
+
+  /**
+   * Throws an UnknownStateError unless both the state the transition leaves and the
+   * state it enters have been defined on this machine.
+   *
+   * @param {Transition} transition - The transition to check.
+   */
+  #requireBothStatesDefined(transition) {
+    this.#requireDefinedState(transition.fromStateName)
+    this.#requireDefinedState(transition.toStateName)
   }
 
   /**
