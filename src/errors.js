@@ -58,7 +58,8 @@ class StateNameError extends FlowStateError {
 }
 
 /**
- * Thrown when a transition or the starting state names a state that was never defined.
+ * Thrown when a transition, the starting state or eventNamesFrom names a state that was
+ * never defined.
  */
 class UnknownStateError extends StateNameError {
   /**

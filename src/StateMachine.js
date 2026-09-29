@@ -10,8 +10,7 @@ import { EventName, StateName } from './names.js'
  * when you send it an event that one of its transitions allows.
  *
  * Every state or event name you pass to the machine must be a non-empty string without
- * whitespace at the start or end. Otherwise the machine throws a TypeError, except in
- * eventNamesFrom, which answers [] for a name it does not know.
+ * whitespace at the start or end. Otherwise the machine throws a TypeError.
  */
 export class StateMachine {
   #currentStateName
@@ -136,13 +135,15 @@ export class StateMachine {
 
   /**
    * Lists the events that have a transition out of the state. Guards are not asked,
-   * so sending a listed event can still throw a BlockedTransitionError. A name that is
-   * not a defined state gives [], whatever its type.
+   * so sending a listed event can still throw a BlockedTransitionError.
    *
    * @param {string} fromStateName - Name of the state to look out from.
    * @returns {string[]} Names of the events leaving that state, each once, in the order first defined.
+   * @throws {UnknownStateError} If the state has not been defined.
    */
   eventNamesFrom(fromStateName) {
+    this.#requireDefinedState(new StateName(fromStateName).text)
+
     const eventNames = this.#transitions.findAll({ from: fromStateName }).map((transition) => transition.eventName)
 
     return [...new Set(eventNames)]

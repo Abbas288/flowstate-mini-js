@@ -94,7 +94,7 @@ describe('StateMachine', () => {
 
   describe('eventNamesFrom', () => {
     it('sees no way out of a state before any transition is defined', () => {
-      const order = new StateMachine('placed')
+      const order = machineWithStates('placed')
 
       expect(order.eventNamesFrom('placed')).toEqual([])
     })
@@ -136,12 +136,29 @@ describe('StateMachine', () => {
       expect(order.eventNamesFrom('placed')).toEqual(['pay'])
     })
 
-    it('sees no way out of a state nobody mentioned', () => {
+    it('sees no way out of a state that no transition leaves', () => {
       const order = machineWithStates('placed', 'paid')
 
       order.defineTransition({ from: 'placed', to: 'paid', on: 'pay' })
 
-      expect(order.eventNamesFrom('shipped')).toEqual([])
+      expect(order.eventNamesFrom('paid')).toEqual([])
+    })
+
+    it('throws an UnknownStateError for a state that was never defined', () => {
+      const order = machineWithStates('placed', 'paid')
+
+      order.defineTransition({ from: 'placed', to: 'paid', on: 'pay' })
+
+      expect(() => order.eventNamesFrom('shipped')).toThrow(UnknownStateError)
+      expect(() => order.eventNamesFrom('shipped')).toThrow(expect.objectContaining({ stateName: 'shipped' }))
+    })
+
+    it('throws a TypeError when the state name is not a non-empty string', () => {
+      const order = machineWithStates('placed')
+
+      for (const invalidName of invalidNames) {
+        expect(() => order.eventNamesFrom(invalidName)).toThrow(TypeError)
+      }
     })
 
     it('lists a guarded event even though the guard refuses the move', () => {
