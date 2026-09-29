@@ -29,7 +29,7 @@ export class StateMachine {
    * Gets the name of the state the machine is in. It changes only when send moves the
    * machine, and it cannot be set from outside.
    *
-   * @returns {string} - Name of the state the machine is in.
+   * @returns {string} Name of the state the machine is in.
    */
   get currentStateName() {
     return this.#currentStateName
@@ -40,7 +40,7 @@ export class StateMachine {
    * receives this same object, so a value written here can be read there. The object
    * cannot be replaced.
    *
-   * @returns {object} - The context every hook and guard is handed.
+   * @returns {object} The context every hook and guard is handed.
    */
   get context() {
     return this.#context
@@ -50,7 +50,7 @@ export class StateMachine {
    * Gets the names of the states defined so far. The array is a copy, so changing it
    * does not change the machine.
    *
-   * @returns {string[]} - Names of every defined state, in definition order.
+   * @returns {string[]} Names of every defined state, in definition order.
    */
   get stateNames() {
     return this.#states.stateNames
@@ -65,7 +65,7 @@ export class StateMachine {
    * @param {object} [options] - The hooks to run on the way in and out.
    * @param {(context: object) => void} [options.onEnter] - Runs on entering this state.
    * @param {(context: object) => void} [options.onExit] - Runs on leaving this state.
-   * @returns {StateMachine} - This machine, so that definitions can be chained.
+   * @returns {StateMachine} This machine, so that definitions can be chained.
    */
   defineState(name, options) {
     this.#states.register(new State(name, options))
@@ -83,7 +83,7 @@ export class StateMachine {
    * @param {string} move.to - Name of the state to enter.
    * @param {string} move.on - Name of the triggering event.
    * @param {(context: object) => boolean} [move.guard] - Decides if the move is allowed.
-   * @returns {StateMachine} - This machine, so that definitions can be chained.
+   * @returns {StateMachine} This machine, so that definitions can be chained.
    */
   defineTransition(move) {
     const transition = new Transition(move)
@@ -115,7 +115,7 @@ export class StateMachine {
    * but no hook runs. Throws the same TypeError and UnknownStateError as send.
    *
    * @param {string} eventName - Name of the event to ask about.
-   * @returns {boolean} - True if send would move the machine now, false if send would refuse the event.
+   * @returns {boolean} True if send would move the machine now, false if send would refuse the event.
    */
   canSend(eventName) {
     this.#requireReadyToSend(eventName)
@@ -128,7 +128,7 @@ export class StateMachine {
    * so sending a listed event can still throw a BlockedTransitionError.
    *
    * @param {string} fromStateName - Name of the state to look out from.
-   * @returns {string[]} - Names of the events leaving that state, each once, in the order first defined.
+   * @returns {string[]} Names of the events leaving that state, each once, in the order first defined.
    */
   eventNamesFrom(fromStateName) {
     const eventNames = this.#transitions.findAll({ from: fromStateName }).map((transition) => transition.eventName)
@@ -173,7 +173,7 @@ export class StateMachine {
    * Finds the transition send will take, and throws an error instead if there is none.
    *
    * @param {string} eventName - Name of the event that was sent.
-   * @returns {Transition} - The first transition whose guard allows the move.
+   * @returns {Transition} The first transition whose guard allows the move.
    */
   #chooseTransition(eventName) {
     return this.#findAllowedTransition(eventName) ?? this.#throwRefusedEventError(eventName)
@@ -183,7 +183,7 @@ export class StateMachine {
    * Asks the guards in definition order and stops at the first that allows the move.
    *
    * @param {string} eventName - Name of the event to look up.
-   * @returns {Transition|undefined} - The transition send would take, or undefined if there is none.
+   * @returns {Transition|undefined} The transition send would take, or undefined if there is none.
    */
   #findAllowedTransition(eventName) {
     return this.#candidatesFor(eventName).find((candidate) => candidate.isAllowedIn(this.#context))
@@ -211,7 +211,7 @@ export class StateMachine {
    * order. Guards are not asked.
    *
    * @param {string} eventName - Name of the event to look up.
-   * @returns {Transition[]} - The transitions send could take, if their guards allow it.
+   * @returns {Transition[]} The transitions send could take, if their guards allow it.
    */
   #candidatesFor(eventName) {
     return this.#transitions.findAll({ from: this.#currentStateName, on: eventName })

@@ -50,7 +50,7 @@ class StateNameError extends FlowStateError {
   /**
    * Gets the state name on its own, so that code does not have to parse the message.
    *
-   * @returns {string} - The state name the error is about.
+   * @returns {string} The state name the error is about.
    */
   get stateName() {
     return this.#stateName
@@ -114,7 +114,7 @@ class RefusedEventError extends FlowStateError {
    * Gets the name of the state the machine was in when it refused the event. The
    * machine is still in that state, since a refused event changes nothing.
    *
-   * @returns {string} - Name of the state the machine was in.
+   * @returns {string} Name of the state the machine was in.
    */
   get fromStateName() {
     return this.#fromStateName
@@ -123,7 +123,7 @@ class RefusedEventError extends FlowStateError {
   /**
    * Gets the event name exactly as it was sent, not a cleaned-up form of it.
    *
-   * @returns {string} - Name of the event that was sent.
+   * @returns {string} Name of the event that was sent.
    */
   get eventName() {
     return this.#eventName
@@ -172,7 +172,7 @@ class BlockedTransitionError extends RefusedEventError {
    * Gets the name of the state the machine would have entered if the guard had allowed
    * the move.
    *
-   * @returns {string} - Name of the state the transition would have entered.
+   * @returns {string} Name of the state the transition would have entered.
    */
   get toStateName() {
     return this.#toStateName

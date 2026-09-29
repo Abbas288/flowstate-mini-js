@@ -27,7 +27,7 @@ export class State {
    * Gets the name of the state. The name cannot be changed after the state has been
    * created.
    *
-   * @returns {string} - The name identifying this state.
+   * @returns {string} The name identifying this state.
    */
   get name() {
     return this.#name.text
@@ -61,7 +61,7 @@ export class State {
    *
    * @param {*} value - The value to check.
    * @param {string} label - Hook name, used in the error message.
-   * @returns {((context: object) => void)|undefined} - The same value.
+   * @returns {((context: object) => void)|undefined} The same value.
    */
   #requireOptionalHook(value, label) {
     if (value !== undefined && typeof value !== 'function') {

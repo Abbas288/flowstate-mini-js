@@ -30,7 +30,7 @@ export class Transition {
    * Gets the name of the state the transition leaves. The machine must be in that state
    * for the transition to be possible.
    *
-   * @returns {string} - Name of the state it leaves.
+   * @returns {string} Name of the state it leaves.
    */
   get fromStateName() {
     return this.#fromStateName.text
@@ -40,7 +40,7 @@ export class Transition {
    * Gets the name of the state the transition enters. It may be the same state that
    * the transition leaves.
    *
-   * @returns {string} - Name of the state it enters.
+   * @returns {string} Name of the state it enters.
    */
   get toStateName() {
     return this.#toStateName.text
@@ -50,7 +50,7 @@ export class Transition {
    * Gets the name of the event that triggers the transition. Several transitions may
    * share an event name, even transitions that leave the same state.
    *
-   * @returns {string} - Name of the event that triggers this transition.
+   * @returns {string} Name of the event that triggers this transition.
    */
   get eventName() {
     return this.#eventName.text
@@ -61,7 +61,7 @@ export class Transition {
    * value of the wrong type gives false rather than an error.
    *
    * @param {string} eventName - Name of the event to test.
-   * @returns {boolean} - True if that event triggers this transition.
+   * @returns {boolean} True if that event triggers this transition.
    */
   isTriggeredBy(eventName) {
     return this.#eventName.text === eventName
@@ -73,7 +73,7 @@ export class Transition {
    * the context changes.
    *
    * @param {object} context - The state machine's shared context.
-   * @returns {boolean} - True if this transition may run right now.
+   * @returns {boolean} True if this transition may run right now.
    */
   isAllowedIn(context) {
     if (this.#guard === undefined) {
@@ -88,7 +88,7 @@ export class Transition {
    * TypeError otherwise.
    *
    * @param {*} value - The value to check.
-   * @returns {((context: object) => boolean)|undefined} - The same value.
+   * @returns {((context: object) => boolean)|undefined} The same value.
    */
   #requireOptionalGuard(value) {
     if (value !== undefined && typeof value !== 'function') {

@@ -6,7 +6,7 @@ import { StateMachine } from '../../src/StateMachine.js'
  *
  * @param {string} initialStateName - Name of the state the machine starts in.
  * @param {...string} otherStateNames - Further names to define on it.
- * @returns {StateMachine} - A fresh machine with every name defined.
+ * @returns {StateMachine} A fresh machine with every name defined.
  */
 export const machineWithStates = (initialStateName, ...otherStateNames) => {
   const order = new StateMachine(initialStateName)
