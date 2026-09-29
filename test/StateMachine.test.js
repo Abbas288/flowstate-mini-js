@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { StateMachine } from '../src/StateMachine.js'
 import {
   BlockedTransitionError,
@@ -517,22 +517,14 @@ describe('StateMachine', () => {
     })
 
     it('passes its own context object to the guard', () => {
-      const receivedContexts = []
+      const guard = vi.fn(() => true)
       const order = machineWithStates('placed', 'paid')
-      order.defineTransition({
-        from: 'placed',
-        to: 'paid',
-        on: 'pay',
-        guard: (ctx) => {
-          receivedContexts.push(ctx)
-
-          return true
-        },
-      })
+      order.defineTransition({ from: 'placed', to: 'paid', on: 'pay', guard })
 
       order.send('pay')
 
-      expectSameItems(receivedContexts, [order.context])
+      expect(guard).toHaveBeenCalledOnce()
+      expectSameItems(guard.mock.lastCall, [order.context])
     })
 
     it('moves on a later send once the guard allows it', () => {
@@ -609,23 +601,14 @@ describe('StateMachine', () => {
     })
 
     it('does not ask a later guard once an earlier one allows the move', () => {
-      let laterGuardWasAsked = false
+      const laterGuard = vi.fn(() => true)
       const order = machineWithStates('placed', 'paid', 'rejected')
       order.defineTransition({ from: 'placed', to: 'paid', on: 'pay', guard: () => true })
-      order.defineTransition({
-        from: 'placed',
-        to: 'rejected',
-        on: 'pay',
-        guard: () => {
-          laterGuardWasAsked = true
-
-          return true
-        },
-      })
+      order.defineTransition({ from: 'placed', to: 'rejected', on: 'pay', guard: laterGuard })
 
       order.send('pay')
 
-      expect(laterGuardWasAsked).toBe(false)
+      expect(laterGuard).not.toHaveBeenCalled()
     })
 
     it('reports the first transition when every guard on the event blocks its transition', () => {
@@ -637,31 +620,15 @@ describe('StateMachine', () => {
     })
 
     it('asks each guard once when every guard on the event blocks its transition', () => {
-      const askedGuards = []
+      const earlierGuard = vi.fn(() => false)
+      const laterGuard = vi.fn(() => false)
       const order = machineWithStates('placed', 'paid', 'rejected')
-      order.defineTransition({
-        from: 'placed',
-        to: 'paid',
-        on: 'pay',
-        guard: () => {
-          askedGuards.push('paid')
-
-          return false
-        },
-      })
-      order.defineTransition({
-        from: 'placed',
-        to: 'rejected',
-        on: 'pay',
-        guard: () => {
-          askedGuards.push('rejected')
-
-          return false
-        },
-      })
+      order.defineTransition({ from: 'placed', to: 'paid', on: 'pay', guard: earlierGuard })
+      order.defineTransition({ from: 'placed', to: 'rejected', on: 'pay', guard: laterGuard })
 
       expect(() => order.send('pay')).toThrow(BlockedTransitionError)
-      expect(askedGuards).toEqual(['paid', 'rejected'])
+      expect(earlierGuard).toHaveBeenCalledOnce()
+      expect(laterGuard).toHaveBeenCalledOnce()
     })
 
     it('runs the exit hook, then the enter hook, and no other hook', () => {
@@ -831,42 +798,25 @@ describe('StateMachine', () => {
     })
 
     it('passes its own context object to the guard', () => {
-      const receivedContexts = []
+      const guard = vi.fn(() => true)
       const order = machineWithStates('placed', 'paid')
-      order.defineTransition({
-        from: 'placed',
-        to: 'paid',
-        on: 'pay',
-        guard: (ctx) => {
-          receivedContexts.push(ctx)
-
-          return true
-        },
-      })
+      order.defineTransition({ from: 'placed', to: 'paid', on: 'pay', guard })
 
       order.canSend('pay')
 
-      expectSameItems(receivedContexts, [order.context])
+      expect(guard).toHaveBeenCalledOnce()
+      expectSameItems(guard.mock.lastCall, [order.context])
     })
 
     it('does not ask a later guard once an earlier one allows the move', () => {
-      let laterGuardWasAsked = false
+      const laterGuard = vi.fn(() => true)
       const order = machineWithStates('placed', 'paid', 'rejected')
       order.defineTransition({ from: 'placed', to: 'paid', on: 'pay', guard: () => true })
-      order.defineTransition({
-        from: 'placed',
-        to: 'rejected',
-        on: 'pay',
-        guard: () => {
-          laterGuardWasAsked = true
-
-          return true
-        },
-      })
+      order.defineTransition({ from: 'placed', to: 'rejected', on: 'pay', guard: laterGuard })
 
       order.canSend('pay')
 
-      expect(laterGuardWasAsked).toBe(false)
+      expect(laterGuard).not.toHaveBeenCalled()
     })
 
     it('throws a TypeError when the event name is not a non-empty string', () => {
