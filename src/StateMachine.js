@@ -175,9 +175,7 @@ export class StateMachine {
    * @returns {Transition|undefined} - The transition send would take, or undefined if there is none.
    */
   #findAllowedTransition(eventName) {
-    return this.#transitions
-      .findAll({ from: this.#currentStateName, on: eventName })
-      .find((candidate) => candidate.isAllowedIn(this.#context))
+    return this.#candidatesFor(eventName).find((candidate) => candidate.isAllowedIn(this.#context))
   }
 
   /**
@@ -188,13 +186,24 @@ export class StateMachine {
    * @param {string} eventName - Name of the event that was refused.
    */
   #throwRefusedEventError(eventName) {
-    const candidates = this.#transitions.findAll({ from: this.#currentStateName, on: eventName })
+    const candidates = this.#candidatesFor(eventName)
 
     if (candidates.length === 0) {
       throw new NoTransitionError(this.#currentStateName, eventName)
     }
 
     throw new BlockedTransitionError(candidates[0])
+  }
+
+  /**
+   * Finds the transitions that leave the current state on the event, in definition
+   * order. Guards are not asked.
+   *
+   * @param {string} eventName - Name of the event to look up.
+   * @returns {Transition[]} - The transitions send could take, if their guards allow it.
+   */
+  #candidatesFor(eventName) {
+    return this.#transitions.findAll({ from: this.#currentStateName, on: eventName })
   }
 
   /**
