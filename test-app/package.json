@@ -1,0 +1,13 @@
+{
+  "name": "flowstate-mini-js-test-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A console app for trying flowstate-mini-js by hand.",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "flowstate-mini-js": "file:.."
+  }
+}
