@@ -9,9 +9,9 @@
  * Base class for every error the machine throws when one of its rules is broken.
  * Catch it to handle all of them, including kinds added in later versions.
  *
- * A wrong argument type is not one of these. If a name is not a string or a guard
- * is not a function, the built-in TypeError is thrown instead, since that is a
- * mistake in the calling code.
+ * A wrong argument is not one of these. If a name breaks the rule described on
+ * StateMachine, or a hook or guard is not a function, the built-in TypeError is thrown
+ * instead, since that is a mistake in the calling code.
  */
 class FlowStateError extends Error {
   /**

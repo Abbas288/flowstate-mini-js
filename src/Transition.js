@@ -10,15 +10,15 @@ export class Transition {
   #guard
 
   /**
-   * Creates a transition. Only the types are checked here. StateMachine checks that
-   * both states exist when the transition is defined on it.
+   * Creates a transition. Only the fields themselves are checked here. StateMachine
+   * checks that both states exist when the transition is defined on it.
    *
    * @param {object} move - The three names that make up the move, plus an optional guard.
    * @param {string} move.from - Name of the state to leave.
    * @param {string} move.to - Name of the state to enter.
    * @param {string} move.on - Name of the triggering event.
    * @param {(context: object) => boolean} [move.guard] - Decides if the move is allowed.
-   * @throws {TypeError} If from, to or on is not a non-empty string, or starts or ends with whitespace.
+   * @throws {TypeError} If StateName rejects from or to, or EventName rejects on.
    * @throws {TypeError} If the guard is not a function.
    */
   constructor({ from, to, on, guard } = {}) {
