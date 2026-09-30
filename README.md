@@ -358,8 +358,9 @@ try {
 ## Project structure
 
 ```text
-src/    The module. src/index.js is the entry point, the other files are internal.
-test/   Unit tests (Vitest). The StateMachine tests are split into several files in test/StateMachine/.
+src/       The module. src/index.js is the entry point, the other files are internal.
+test/      Unit tests (Vitest). The StateMachine tests are split into several files in test/StateMachine/.
+test-app/  A console app for trying the module by hand. It imports the module by its package name, like a user would.
 ```
 
 ## Development
@@ -378,6 +379,17 @@ npm test
 | `npm run format:check` | Checks the formatting of all files with Prettier                                                       |
 | `npm run format`       | Formats all files with Prettier                                                                        |
 | `npm run lint:fix`     | Formats all files with Prettier, then fixes what ESLint can in the JavaScript files and lists the rest |
+
+To try the module by hand, start the Test-App. It installs the module from the folder above, so
+it runs the code in `src/`:
+
+```bash
+cd test-app
+npm install
+npm start
+```
+
+It runs an order flow in the terminal. Type `help` to see the commands.
 
 The test results are in [TEST_REPORT.md](TEST_REPORT.md).
 
