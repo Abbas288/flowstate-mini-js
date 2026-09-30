@@ -124,14 +124,6 @@ Test-App itself rather than the module.
 | Test-App: `amount` shows the amount, and refuses a value that is not a number.                                              | `amount`, `amount abc`, `amount 100`, `amount`                     | ✅ `context.amount: 0`, then `"abc" is not a number. The amount is still 0.`, then `context.amount: 100` twice.                                                             |
 | Test-App: a line that is not a command.                                                                                     | `foo`, an empty line, `states`                                     | ✅ `Unknown command "foo". Type help to see the commands.` The empty line prints nothing, and `states` still answers.                                                       |
 
-### Problems found and fixed
-
-| What was found                                                                                                                                 | How it was found   | Fix                                                                                                                                                                                               |
-| ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A name with whitespace at the start or end, such as `' pay'`, was accepted as separate from `'pay'`.                                           | README review      | `f634f63`: throws `TypeError`. Test: "rejects a name that starts or ends with whitespace".                                                                                                        |
-| `eventNamesFrom` gave `[]` for an undefined state, as for a defined state with no way out.                                                     | Writing the README | `d3c28ac`: throws `UnknownStateError`. Test: "throws an UnknownStateError for a state that was never defined".                                                                                    |
-| Test-App: `amount` without a valid number set the amount to `NaN`, so `send pay` was refused for no visible reason. `send pay now` sent `pay`. | Using the Test-App | `6ba6c5c`: `amount` alone shows the amount, and anything but a finite number is refused. The rest of the line is the argument. Tests: the manual tests for spaces inside a name and for `amount`. |
-
 ### Not tested
 
 - Operating systems other than Windows 11.
@@ -366,6 +358,5 @@ Test-App itself rather than the module.
 
 ## Conclusion
 
-All 210 unit tests and all 14 manual tests passed, and the unit tests cover 100% of `src/`. The three problems
-found along the way are fixed and covered by tests. The gaps, such as other operating systems, browsers and a CI
-pipeline, are listed under [Not tested](#not-tested).
+All 210 unit tests and all 14 manual tests passed, and the unit tests cover 100% of `src/`. The gaps, such as other
+operating systems, browsers and a CI pipeline, are listed under [Not tested](#not-tested).
