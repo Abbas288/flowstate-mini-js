@@ -15,7 +15,7 @@ export class OrderConsole {
     ['can', (eventName) => this.#printCanSend(eventName)],
     ['events', (stateName) => this.#printEventNames(stateName)],
     ['states', () => this.#printStateNames()],
-    ['amount', (amount) => this.#setAmount(amount)],
+    ['amount', (amountText) => (amountText === undefined ? this.#printAmount() : this.#setAmount(amountText))],
     ['help', () => this.#printHelp()],
   ])
 
@@ -39,11 +39,13 @@ export class OrderConsole {
     this.#askForCommand(terminal)
 
     for await (const line of terminal) {
-      if (line.trim() === 'quit') {
+      const { commandName, argument } = this.#splitLine(line)
+
+      if (commandName === 'quit') {
         break
       }
 
-      this.#run(line)
+      this.#run(commandName, argument)
       this.#askForCommand(terminal)
     }
   }
@@ -59,28 +61,49 @@ export class OrderConsole {
   }
 
   /**
-   * Runs one line, and prints the error instead if the machine refuses it.
+   * Splits a line into the command name, which is the first word, and the argument, which
+   * is the rest of the line. Spaces inside the argument are kept, so "send on hold" sends
+   * the event "on hold".
    *
    * @param {string} line - What you typed, such as "send pay".
+   * @returns {{commandName: string, argument: (string|undefined)}} The argument is undefined when nothing follows the command name.
    */
-  #run(line) {
+  #splitLine(line) {
+    const text = line.trim()
+    const nameEnd = text.search(/\s/)
+
+    if (nameEnd === -1) {
+      return { commandName: text, argument: undefined }
+    }
+
+    return { commandName: text.slice(0, nameEnd), argument: text.slice(nameEnd).trim() }
+  }
+
+  /**
+   * Runs one command, and prints the error instead if the machine refuses it.
+   *
+   * @param {string} commandName - The first word of the line.
+   * @param {string} [argument] - The rest of the line, if any.
+   */
+  #run(commandName, argument) {
     try {
-      this.#runCommand(line.trim().split(/\s+/))
+      this.#runCommand(commandName, argument)
     } catch (error) {
       this.#printError(error)
     }
   }
 
   /**
-   * Looks up the command by its first word and runs it with the second word.
+   * Looks up the command and runs it with the argument. An empty line does nothing.
    *
-   * @param {string[]} words - The words of the line, command first.
+   * @param {string} commandName - The first word of the line.
+   * @param {string} [argument] - The rest of the line, if any.
    */
-  #runCommand([commandName, argument]) {
+  #runCommand(commandName, argument) {
     if (this.#commands.has(commandName)) {
       this.#commands.get(commandName)(argument)
-    } else {
-      console.log(`  Unknown command "${commandName}".`)
+    } else if (commandName !== '') {
+      console.log(`  Unknown command "${commandName}". Type help to see the commands.`)
     }
   }
 
@@ -110,13 +133,27 @@ export class OrderConsole {
   }
 
   /**
-   * Sets the amount in the context. The guard on pay allows the move only above 0.
-   *
-   * @param {string} amount - The amount as typed, such as "250".
+   * Prints the amount in the context, which the guard on pay reads.
    */
-  #setAmount(amount) {
-    this.#machine.context.amount = Number(amount)
+  #printAmount() {
     console.log('  context.amount:', this.#machine.context.amount)
+  }
+
+  /**
+   * Sets the amount in the context. Anything that is not a finite number is refused, and
+   * the amount stays as it was.
+   *
+   * @param {string} amountText - The amount as typed, such as "250".
+   */
+  #setAmount(amountText) {
+    const amount = Number(amountText)
+
+    if (Number.isFinite(amount)) {
+      this.#machine.context.amount = amount
+      this.#printAmount()
+    } else {
+      console.log(`  "${amountText}" is not a number. The amount is still ${this.#machine.context.amount}.`)
+    }
   }
 
   /**
@@ -130,7 +167,7 @@ export class OrderConsole {
         '  can <event>      Ask if send would take the event, without sending it.',
         '  events [state]   List the events out of a state. Without a state, the current one.',
         '  states           List the states.',
-        '  amount <number>  Set the amount. Paying needs an amount above 0. It starts at 0.',
+        '  amount [number]  Show the amount, or set it. Paying needs an amount above 0.',
         '  help             Show this list.',
         '  quit             Stop the app.',
       ].join('\n')
