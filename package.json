@@ -11,6 +11,7 @@
   "license": "MIT",
   "scripts": {
     "test": "vitest run",
+    "test:verbose": "vitest run --reporter=verbose",
     "test:coverage": "vitest run --coverage --coverage.include=src",
     "lint": "eslint .",
     "lint:fix": "prettier --write . && eslint . --fix",

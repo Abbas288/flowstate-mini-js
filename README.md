@@ -375,6 +375,7 @@ npm test
 | Script                  | What it does                                                                                              |
 | ----------------------- | --------------------------------------------------------------------------------------------------------- |
 | `npm test`              | Runs the unit tests with Vitest                                                                           |
+| `npm run test:verbose`  | Runs the unit tests and prints the name of every test                                                     |
 | `npm run test:coverage` | Runs the unit tests and measures how much of `src/` they cover. The full report is written to `coverage/` |
 | `npm run lint`          | Checks the JavaScript files with ESLint                                                                   |
 | `npm run format:check`  | Checks the formatting of all files with Prettier                                                          |
