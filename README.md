@@ -372,13 +372,14 @@ npm install
 npm test
 ```
 
-| Script                 | What it does                                                                                           |
-| ---------------------- | ------------------------------------------------------------------------------------------------------ |
-| `npm test`             | Runs the unit tests with Vitest                                                                        |
-| `npm run lint`         | Checks the JavaScript files with ESLint                                                                |
-| `npm run format:check` | Checks the formatting of all files with Prettier                                                       |
-| `npm run format`       | Formats all files with Prettier                                                                        |
-| `npm run lint:fix`     | Formats all files with Prettier, then fixes what ESLint can in the JavaScript files and lists the rest |
+| Script                  | What it does                                                                                              |
+| ----------------------- | --------------------------------------------------------------------------------------------------------- |
+| `npm test`              | Runs the unit tests with Vitest                                                                           |
+| `npm run test:coverage` | Runs the unit tests and measures how much of `src/` they cover. The full report is written to `coverage/` |
+| `npm run lint`          | Checks the JavaScript files with ESLint                                                                   |
+| `npm run format:check`  | Checks the formatting of all files with Prettier                                                          |
+| `npm run format`        | Formats all files with Prettier                                                                           |
+| `npm run lint:fix`      | Formats all files with Prettier, then fixes what ESLint can in the JavaScript files and lists the rest    |
 
 To try the module by hand, start the Test-App. It installs the module from the folder above, so
 it runs the code in `src/`:

@@ -11,6 +11,7 @@
   "license": "MIT",
   "scripts": {
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage --coverage.include=src",
     "lint": "eslint .",
     "lint:fix": "prettier --write . && eslint . --fix",
     "format": "prettier --write .",
@@ -21,6 +22,7 @@
   },
   "devDependencies": {
     "@lnu/eslint-config": "^2.0.13",
+    "@vitest/coverage-v8": "^5.0.1",
     "eslint": "^10.11.0",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.9.9",
